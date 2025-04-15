@@ -62,7 +62,7 @@ function Header() {
                                 <Link className='position-relative header-menu-parent'>
                                     <li>Sản phẩm</li>
                                     <div className="dropdown-cate-item position-absolute d-flex align-items-center header-menu-child ">
-                                        <ul> Honda
+                                        <ul> <Link style={{ color: 'red' }} to='/Product'>Honda</Link>
                                             <Link to='/Product'>
                                                 <li>Xe ga</li>
                                             </Link>
@@ -74,7 +74,7 @@ function Header() {
                                             </Link>
 
                                         </ul>
-                                        <ul> Yamaha
+                                        <ul><Link style={{ color: 'red' }} to='/Product'>Yamaha</Link>
                                             <Link to=''>
                                                 <li>Xe ga</li>
                                             </Link>
@@ -86,7 +86,7 @@ function Header() {
                                             </Link>
 
                                         </ul>
-                                        <ul> SYM
+                                        <ul> <Link style={{ color: 'red' }} to='/Product'>SYM</Link>
                                             <Link to=''>
                                                 <li>Xe ga</li>
                                             </Link>

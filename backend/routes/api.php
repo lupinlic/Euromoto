@@ -1,0 +1,77 @@
+<?php
+
+use App\Http\Controllers\AddressController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CategoryParentController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\FavoriteProductController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ProductColorController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductVersionController;
+use App\Http\Controllers\UserController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+
+// Route::get('/user', function (Request $request) {
+//     return $request->user();
+// })->middleware('auth:sanctum');
+
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', [AuthController::class, 'user']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+// user
+    
+    // địa chỉ
+    Route::apiResource('address',AddressController::class)->only('destroy','update','store','index','show');
+    // khách hàng
+    Route::get('customer/{UserID}/customer', [CustomerController::class, 'getByUser']);
+    // sản phẩm yêu thích
+    Route::get('favorite/byuser/{id}', [FavoriteProductController::class, 'getFavoritesByUser']); 
+    Route::get('/favorites/check', [FavoriteProductController::class, 'checkFavorite']);
+    Route::post('/favorites', [FavoriteProductController::class, 'toggleFavorite']);
+    // giỏ hàng
+    Route::post('cart/add', [CartController::class, 'addToCart']);
+    Route::get('cart/{user_id}', [CartController::class, 'getCart']);
+    Route::put('cart/update', [CartController::class, 'updateCart']);
+    Route::delete('cart/remove', [CartController::class, 'removeFromCart']);
+
+// admin
+    Route::middleware('check.admin')->group(function () {
+        // sản phẩm
+        Route::post('products', [ProductController::class, 'store']);
+        Route::put('products/{id}', [ProductController::class, 'update']); // Sửa
+        Route::delete('products/{id}', [ProductController::class, 'destroy']); // Xoá
+        // danh mục cha
+        Route::apiResource('category_parent',CategoryParentController::class)->only('destroy','update','store','show');
+        // danh mục con
+        Route::apiResource('category',CategoryController::class)->only('destroy','update','store','show');
+        // phiên bản
+        Route::apiResource('productversion',ProductVersionController::class)->only('destroy','update','store','show');
+        //    màu sắc
+        Route::apiResource('productcolor',ProductColorController::class)->only('destroy','update','store','show');
+
+    });
+});
+// công khai
+    Route::get('category_parent', [CategoryParentController::class, 'index']); 
+    Route::get('category', [CategoryParentController::class, 'index']); 
+    Route::get('category/{CategoryParentID}/category', [CategoryController::class, 'getByCategoryParent']);
+    Route::get('products', [ProductController::class, 'index']); 
+    Route::get('products/{id}', [ProductController::class, 'show']); 
+    Route::get('/products/bycategoryparent/{id}', [ProductController::class, 'getByCategoryParent']);
+    Route::get('/products/bycategory/{id}', [ProductController::class, 'getByCategory']);
+    Route::get('productversion/byproduct/{id}', [ProductVersionController::class, 'getByProduct']); 
+    Route::get('productcolor/byproduct/{id}', [ProductColorController::class, 'getByProduct']); 
+    Route::get('productversion', [ProductVersionController::class, 'index']); 
+    Route::get('productcolor', [ProductColorController::class, 'index']); 
+   
+    Route::post('/order/place', [OrderController::class, 'store']);
+    Route::get('order', [OrderController::class, 'index']); 
+    Route::get('/addresses/{user_id}', [AddressController::class, 'getAddressesByUser']);
+    Route::get('customer/getorder/{id}', [CustomerController::class, 'getOrderOfCustomer']);
