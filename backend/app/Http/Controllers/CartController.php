@@ -11,28 +11,34 @@ class CartController extends Controller
     //
     public function addToCart(Request $request)
     {
-        $quantity = $request->Quantity ?? 1;
+        $UserID = $request->UserID;
 
-        $item = CartItem::where('UserID', $request->UserID)
-                        ->where('ProductID', $request->ProductID)
-                        ->first();
+    $cartItem = CartItem::where('UserID', $UserID)
+        ->where('ProductID', $request->ProductID)
+        ->where('ProductColorID', $request->ProductColorID)
+        ->where('ProductVersionID', $request->ProductVersionID)
+        ->first();
 
-        if ($item) {
-            $item->Quantity += $quantity;
-            $item->save();
-        } else {
-            CartItem::create([
-                'UserID' => $request->UserID,
-                'ProductID' => $request->ProductID,
-                'Quantity' => $quantity
-            ]);
-        }
+    if ($cartItem) {
+        // Cộng thêm số lượng nếu sản phẩm đã có
+        $cartItem->Quantity += $request->Quantity;
+        $cartItem->save();
+    } else {
+        // Thêm sản phẩm mới vào giỏ hàng
+        CartItem::create([
+            'UserID' => $UserID,
+            'ProductID' => $request->ProductID,
+            'ProductColorID' => $request->ProductColorID,
+            'ProductVersionID' => $request->ProductVersionID,
+            'Quantity' => $request->Quantity,
+        ]);
+    }
 
-        return response()->json(['message' => 'Added to cart successfully']);
+    return response()->json(['message' => 'Đã thêm sản phẩm vào giỏ hàng thành công']);
     }
     public function getCart($user_id)
     {
-        $cartItems = CartItem::with('product')
+        $cartItems = CartItem::with('product.category.parent', 'version', 'color')
                     ->where('UserID', $user_id)
                     ->get();
 
@@ -44,7 +50,9 @@ class CartController extends Controller
     public function updateCart(Request $request)
     {
         $item = CartItem::where('UserID', $request->UserID)
-                        ->where('ProductID', $request->ProductID)
+        ->where('ProductID', $request->ProductID)
+        ->where('ProductColorID', $request->ProductColorID)
+        ->where('ProductVersionID', $request->ProductVersionID)
                         ->first();
 
         if (!$item) return response()->json(['message' => 'Cart item not found'], 404);
@@ -55,18 +63,28 @@ class CartController extends Controller
         return response()->json(['message' => 'Cart updated']);
     }
 
-    public function removeFromCart(Request $request)
+    public function removeFromCart($CartID)
     {
-       
 
-        $deleted = CartItem::where('UserID', $request->UserID)
-                            ->where('ProductID', $request->ProductID)
-                            ->delete();
+        $deleted = CartItem::where('CartID',$CartID)->delete();
 
-        if ($deleted) {
-            return response()->json(['message' => 'Item removed from cart']);
-        }
+    if ($deleted) {
+        return response()->json(['message' => 'Item removed from cart']);
+    }
 
+    return response()->json(['message' => 'Item not found'], 404);
+    }
+    public function updateQuantity(Request $request)
+{
+    $cartItem = CartItem::where('CartID', $request->CartID)->first();
+
+    if (!$cartItem) {
         return response()->json(['message' => 'Item not found'], 404);
     }
+
+    $cartItem->Quantity = $request->Quantity;
+    $cartItem->save();
+
+    return response()->json(['message' => 'Quantity updated']);
+}
 }

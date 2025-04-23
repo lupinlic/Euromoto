@@ -23,12 +23,17 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/user', [AuthController::class, 'user']);
+    Route::get('/user/getuserID', [AuthController::class, 'userID']);
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/change-password', [UserController::class, 'changePassword']);
 // user
-    
+    Route::get('user/{id}', [UserController::class, 'show']);
+    Route::put('user/{id}', [ProductController::class, 'update']);
     // địa chỉ
     Route::apiResource('address',AddressController::class)->only('destroy','update','store','index','show');
+    Route::get('/address/user/{user_id}', [AddressController::class, 'getAddressesByUser']);
+    Route::get('/user/{userId}/defaultaddress', [AddressController::class, 'getDefaultAddress']);
+    Route::post('/user/{userId}/setdefaultaddress/{addressId}', [AddressController::class, 'setDefaultAddress']);
     // khách hàng
     Route::get('customer/{UserID}/customer', [CustomerController::class, 'getByUser']);
     // sản phẩm yêu thích
@@ -39,7 +44,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('cart/add', [CartController::class, 'addToCart']);
     Route::get('cart/{user_id}', [CartController::class, 'getCart']);
     Route::put('cart/update', [CartController::class, 'updateCart']);
-    Route::delete('cart/remove', [CartController::class, 'removeFromCart']);
+    Route::delete('cart/remove/{id}', [CartController::class, 'removeFromCart']);
+    Route::put('cart/updatequantity', [CartController::class, 'updateQuantity']);
+    // đơn hàng
+    Route::post('/order/place', [OrderController::class, 'store']);
+    Route::get('order', [OrderController::class, 'index']);
+    Route::get('customer/getorder/{id}', [CustomerController::class, 'getOrderOfCustomer']);
 
 // admin
     Route::middleware('check.admin')->group(function () {
@@ -71,7 +81,4 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('productversion', [ProductVersionController::class, 'index']); 
     Route::get('productcolor', [ProductColorController::class, 'index']); 
    
-    Route::post('/order/place', [OrderController::class, 'store']);
-    Route::get('order', [OrderController::class, 'index']); 
-    Route::get('/addresses/{user_id}', [AddressController::class, 'getAddressesByUser']);
-    Route::get('customer/getorder/{id}', [CustomerController::class, 'getOrderOfCustomer']);
+    

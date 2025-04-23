@@ -1,13 +1,21 @@
 import React, { useState } from "react";
-
+import authUser from "../api/authUser";
 
 
 const ChangePassword = () => {
+    const userId = localStorage.getItem('user_id');
     const [oldPassword, setOldPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
+    const data = {
+        id: userId,
+        current_password: oldPassword,
+        new_password: newPassword,
+    }
     const handleSubmit = (e) => {
+        console.log(data)
         e.preventDefault();
         if (newPassword.length < 8) {
             setError("Mật khẩu mới phải có ít nhất 8 ký tự.");
@@ -19,6 +27,16 @@ const ChangePassword = () => {
         }
         setError("");
         alert("Mật khẩu đã được thay đổi thành công!");
+        try {
+            authUser.changepass(data)
+            // Optional: reset form
+            setOldPassword("");
+            setNewPassword("");
+            setConfirmPassword("");
+        } catch (error) {
+            setError("Lỗi khi đổi mật khẩu.");
+        }
+
     };
     return (
         <div className="change-password-container">

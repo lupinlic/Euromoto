@@ -1,11 +1,42 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import "../../styles/product.css"
 import Crumb from '../../components/Crumb'
 import { Helmet } from "react-helmet-async";
 import ProductFrame from "../../components/ProductFrame";
+import { useSearchParams } from 'react-router-dom';
+import productApi from '../../api/productApi';
 
 function Product() {
+    const [searchParams] = useSearchParams();
+    const parentId = searchParams.get("parent");
+    const categoryId = searchParams.get("category");
+    const [products, setProducts] = useState([]);
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                let res;
+                if (categoryId) {
+                    // Lọc theo category con
+                    res = await productApi.getproductbyCategory(categoryId);
+                    setProducts(res.data);
+                } else if (parentId) {
+                    // Lọc theo category cha
+                    res = await productApi.getproductbyCategoryparent(parentId);
+                    setProducts(res.data);
+                } else {
+                    // Không có lọc gì
+                    res = await productApi.getAll();
+                    setProducts(res);
+                }
+
+            } catch (err) {
+                console.error("Lỗi lấy sản phẩm:", err);
+            }
+        };
+
+        fetchProducts();
+    }, [parentId, categoryId]);
     return (
         <div>
             <Helmet>
@@ -92,46 +123,19 @@ function Product() {
 
                         </div>
                         <div className='d-flex flex-wrap mt-3' style={{ rowGap: '20px' }}>
-                            <ProductFrame
-                                name='MT-15'
-                                image='https://bizweb.dktcdn.net/100/519/812/products/mt15-gp-004.png?v=1727682058583'
-                                price='69.000.000'
-                            />
-                            <ProductFrame
-                                name='MT-15'
-                                image='https://bizweb.dktcdn.net/100/519/812/products/mt15-gp-004.png?v=1727682058583'
-                                price='69.000.000'
-                            />
-                            <ProductFrame
-                                name='MT-15'
-                                image='https://bizweb.dktcdn.net/100/519/812/products/mt15-gp-004.png?v=1727682058583'
-                                price='69.000.000'
-                            />
-                            <ProductFrame
-                                name='MT-15'
-                                image='https://bizweb.dktcdn.net/100/519/812/products/mt15-gp-004.png?v=1727682058583'
-                                price='69.000.000'
-                            />
-                            <ProductFrame
-                                name='MT-15'
-                                image='https://bizweb.dktcdn.net/100/519/812/products/mt15-gp-004.png?v=1727682058583'
-                                price='69.000.000'
-                            />
-                            <ProductFrame
-                                name='MT-15'
-                                image='https://bizweb.dktcdn.net/100/519/812/products/mt15-gp-004.png?v=1727682058583'
-                                price='69.000.000'
-                            />
-                            <ProductFrame
-                                name='MT-15'
-                                image='https://bizweb.dktcdn.net/100/519/812/products/mt15-gp-004.png?v=1727682058583'
-                                price='69.000.000'
-                            />
-                            <ProductFrame
-                                name='MT-15'
-                                image='https://bizweb.dktcdn.net/100/519/812/products/mt15-gp-004.png?v=1727682058583'
-                                price='69.000.000'
-                            />
+                            {products.length > 0 ? (
+                                products.map((product) => (
+                                    <ProductFrame
+                                        id={product.ProductID}
+                                        name={product.ProductName}
+                                        image={`http://127.0.0.1:8000/image/${product.category?.parent?.CategoryParentName}/${product.category?.CategoryName}/${product.ProductName}/${product.thumbnail}`}
+                                        price={product.ProductPrice}
+                                    />
+                                ))
+                            ) : (
+                                <p>Không có sản phẩm nào.</p>
+                            )}
+
                         </div>
                         {/* phân trang */}
                         <div className='d-flex align-items-center justify-content-center pagination mt-3'>

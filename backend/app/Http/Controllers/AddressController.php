@@ -118,14 +118,46 @@ class AddressController extends Controller
     }
     public function getAddressesByUser($user_id)
     {
-        $customer = Customer::where('UserID', $user_id)->first();
-
-       
-        $addresses = $customer->addresses;
+        $addresses = Address::where('UserID', $user_id)->get();
 
         return response()->json([
             'message' => 'Lấy địa chỉ thành công',
             'data' => $addresses
         ], 200);
+    }
+    public function getDefaultAddress($userId)
+    {
+        // Lấy địa chỉ mặc định của người dùng
+        $defaultAddress = Address::getDefaultAddress($userId);
+
+        if ($defaultAddress) {
+            return response()->json([
+                'status' => 'success',
+                'data' => $defaultAddress
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No default address found.'
+            ], 404);
+        }
+    }
+    public function setDefaultAddress(Request $request, $userId, $addressId)
+    {
+        // Gọi phương thức setDefaultAddress để cập nhật địa chỉ
+        $address = Address::setDefaultAddress($userId, $addressId);
+
+        if ($address) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Default address updated successfully.',
+                'data' => $address
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Address not found or invalid user.'
+            ], 404);
+        }
     }
 }

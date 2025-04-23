@@ -13,7 +13,7 @@ class ProductColor extends Model
     protected $primaryKey = 'ProductColorID';
     public $timestamps = false;
 
-    protected $fillable = ['ProductID', 'ProductColorName','ProductColorImg','ProductColorQuantity'];
+    protected $fillable = ['ProductID', 'ProductColorName','ProductColorImg'];
 
     public function product()
     {

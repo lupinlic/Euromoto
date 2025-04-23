@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -33,9 +35,22 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($UserID)
     {
         //
+        $user = User::find($UserID); // Tìm theo CategoryID
+
+        if (!$user) {
+            return response()->json([
+                "message" => "Không tìm thấy danh mục",
+                "data" => null
+            ], 404);
+        }
+    
+        return response()->json([
+            "message" => "Hiển thị danh mục thành công",
+            "data" => $user,
+        ]);
     }
 
     /**
@@ -49,9 +64,24 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request,$UserID)
     {
         //
+        $category = User::find($UserID);
+        if (!$category) {
+            return response()->json([
+                "message" => "Không tìm thấy danh mục",
+                "data" => null
+            ], 404);
+        }
+    
+        // Cập nhật dữ liệu
+        $category->update($request->all());
+    
+        return response()->json([
+            "message" => "Đã sửa danh mục thành công",
+            "data" => $category,
+        ]);
     }
 
     /**
@@ -60,5 +90,16 @@ class UserController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+    public function changePassword(Request $request){
+        $user = User::find($request->id);
+        if (!Hash::check($request->current_password, $user->password)) {
+            return response()->json(['message' => 'Mật khẩu hiện tại không đúng'], 403);
+        }
+    
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+    
+        return response()->json(['message' => 'Đổi mật khẩu thành công']);
     }
 }

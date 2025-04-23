@@ -17,7 +17,7 @@ class ProductController extends Controller
     public function index()
     {
         //
-        $products = Product::with(['category', 'colors', 'versions'])->get(); // Eager loading
+        $products = Product::with(['category.parent', 'colors', 'versions'])->get(); // Eager loading
         return response()->json($products);
 
     }
@@ -62,7 +62,7 @@ class ProductController extends Controller
     public function show($id)
     {
         //
-        $products = Product::with(['category', 'colors', 'versions'])->findOrFail($id); // Eager loading
+        $products = Product::with(['category.parent', 'colors', 'versions'])->findOrFail($id); // Eager loading
 
         $products->thumbnail = url('image/' . $products->thumbnail);
         return response()->json($products);
@@ -159,7 +159,9 @@ class ProductController extends Controller
     public function getByCategoryParent($id)
 {
     $categories = Category::where('CategoryParentID', $id)->pluck('CategoryID');
-    $products = Product::whereIn('CategoryID', $categories)->get();
+    $products = Product::with(['category.parent'])
+        ->whereIn('CategoryID', $categories)
+        ->get();
 
     return response()->json([
         'message' => 'Products by category parent',
@@ -168,7 +170,9 @@ class ProductController extends Controller
 }
 public function getByCategory($id)
 {
-    $products = Product::where('CategoryID', $id)->get();
+    $products = Product::with(['category.parent'])
+        ->where('CategoryID', $id)
+        ->get();
 
     return response()->json([
         'message' => 'Products by category',

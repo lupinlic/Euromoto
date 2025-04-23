@@ -1,13 +1,25 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Crumb from '../../components/Crumb'
 import { Helmet } from "react-helmet-async";
-import { useState } from "react";
 import ChangePassword from '../../components/ChangePassword';
 import AddressForm from '../../components/AddressForm';
 import Address from '../../components/Address';
+import authUser from '../../api/authUser';
+import customerApi from '../../api/customerApi';
 
 function Account() {
-    const orders = [];
+    const userId = localStorage.getItem('user_id');
+
+    // tài khoản
+    const [name, setName] = useState();
+    // khách hàng
+
+    const [fullname, setFullName] = useState();
+    const [phone, setPhone] = useState();
+    const [email, setEmail] = useState();
+    // đơn hàng
+    const [orders, setOrders] = useState([]);
+    // hiện form địa chỉ
     const [isFormVisible, setIsFormVisible] = useState(false);
     const [selectedSection, setSelectedSection] = useState("info");
     const openForm = () => {
@@ -19,6 +31,49 @@ function Account() {
     const closeForm = () => {
         setIsFormVisible(false);
     };
+    // lấy tên tài khoản
+    const getUserName = () => {
+        authUser.get_user(userId)
+            .then(response => {
+                setName(response.data.name)
+            })
+            .catch(error => {
+                console.error('Có lỗi khi lấy tên ' + error + '-' + error.response.data.message)
+            })
+    }
+
+    // lấy khách hàng
+    const getCustomer = () => {
+        customerApi.getByIdUser(userId)
+            .then(response => {
+                setEmail(response.data.Email)
+                setFullName(response.data.FullName)
+                setPhone(response.data.PhoneNumber)
+            }
+            )
+            .catch(error => {
+                console.error('Có lỗi khi lấy khách hàng ' + error + '-' + error.response.data.message)
+            })
+    }
+
+    // lấy đơn hàng
+    const getOrder = () => {
+        customerApi.getOrderByIdUser(userId)
+            .then(response => {
+                setOrders(response.data)
+                console.log(response.data)
+            })
+            .catch(error => {
+                console.error('Có lỗi khi lấy đơn hàng ' + error + '-' + error.response.data.message)
+            })
+    }
+    useEffect(() => {
+        getUserName();
+        getCustomer();
+        getOrder();
+    }, [userId])
+
+
     return (
         <>
             <Helmet>
@@ -32,7 +87,7 @@ function Account() {
                         <p>TRANG TÀI KHOẢN</p>
                         <p>
                             <span>Xin chào,</span>
-                            <span style={{ color: 'red' }}>Lupin!</span>
+                            <span style={{ color: 'red' }}>{name}!</span>
                         </p>
                         <ul className="list-unstyled mt-3">
                             <li
@@ -66,8 +121,9 @@ function Account() {
                             {selectedSection === "info" && (
                                 <div>
                                     <h5>THÔNG TIN TÀI KHOẢN</h5>
-                                    <p><strong>Họ tên:</strong> Lâm Hứa</p>
-                                    <p><strong>Email:</strong> huatunglam1205@gmail.com</p>
+                                    <p><strong>Họ tên:</strong> {fullname}</p>
+                                    <p><strong>Email:</strong> {email}</p>
+                                    <p><strong>Số điện thoại:</strong> {phone}</p>
                                 </div>
                             )}
                             {selectedSection === "orders" && (
@@ -91,13 +147,13 @@ function Account() {
                                                 </tr>
                                             ) : (
                                                 orders.map((order, index) => (
-                                                    <tr key={index} className="text-center">
-                                                        <td>{order.id}</td>
-                                                        <td>{order.date}</td>
-                                                        <td>{order.address}</td>
-                                                        <td>{order.total} VNĐ</td>
-                                                        <td>{order.paymentStatus}</td>
-                                                        <td>{order.shippingStatus}</td>
+                                                    <tr key={index} className="text-center" style={{ borderBottom: '1px solid #FFA726' }}>
+                                                        <td>{order.OrderID}</td>
+                                                        <td>{order.OrderDate}</td>
+                                                        <td>{order.AddressID}</td>
+                                                        <td>{Number(order.TotalPrice).toLocaleString('vi-VN')} VNĐ</td>
+                                                        <td>{order.PaymentMethod}</td>
+                                                        <td>{order.status}</td>
                                                     </tr>
                                                 ))
                                             )}

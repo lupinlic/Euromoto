@@ -13,7 +13,7 @@ class Order extends Model
     protected $primaryKey = 'OrderID';
     public $timestamps = false;
 
-    protected $fillable = ['CustomerID', 'TotalPrice','OrderDate', 'OrderStatus','AddressID','PaymentMethod'];
+    protected $fillable = ['CustomerID', 'TotalPrice','OrderDate', 'status','AddressID','PaymentMethod'];
 
     public function customer()
     {

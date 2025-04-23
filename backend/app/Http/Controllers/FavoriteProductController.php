@@ -32,24 +32,30 @@ class FavoriteProductController extends Controller
         ]);
     }
     public function getFavoritesByUser($user_id)
-    {
-        $favorites = DB::table('favorite_product')
-            ->join('customer', 'favorite_product.CustomerID', '=', 'customer.CustomerID')
-            ->join('product', 'favorite_product.ProductID', '=', 'product.ProductID')
-            ->where('customer.UserID', $user_id)
-            ->select(
-                'product.ProductID as product_id',
-                'product.ProductName as product_name',
-                'product.ProductPrice',
-                'product.thumbnail'
-            )
-            ->get();
+{
+    $favorites = FavoriteProduct::with([
+        'product.category.parent', // load category và parent category
+    ])
+    ->whereHas('customer', function ($query) use ($user_id) {
+        $query->where('UserID', $user_id);
+    })
+    ->get()
+    ->map(function ($favorite) {
+        return [
+            'ProductID' => $favorite->product->ProductID,
+            'ProductName' => $favorite->product->ProductName,
+            'ProductPrice' => $favorite->product->ProductPrice,
+            'thumbnail' => $favorite->product->thumbnail,
+            'CategoryName' => optional($favorite->product->category)->CategoryName,
+            'CategoryParentName' => optional(optional($favorite->product->category)->parent)->CategoryParentName,
+        ];
+    });
 
-        return response()->json([
-            'message' => 'Lấy danh sách sản phẩm yêu thích thành công',
-            'data' => $favorites,
-        ]);
-    }
+    return response()->json([
+        'message' => 'Lấy danh sách sản phẩm yêu thích thành công',
+        'data' => $favorites,
+    ]);
+}
     /**
      * Store a newly created resource in storage.
      */

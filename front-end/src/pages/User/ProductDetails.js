@@ -1,25 +1,113 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import "../../styles/productdetails.css"
 import Crumb from '../../components/Crumb'
 import { Helmet } from "react-helmet-async";
 import { useState } from "react";
 import ProductFrame from '../../components/ProductFrame';
 import Title from '../../components/Title';
+import { useSearchParams } from 'react-router-dom';
+import productApi from '../../api/productApi';
+import cartApi from '../../api/cartApi';
+import { useContext } from 'react';
+import { CartContext } from '../../contexts/CartContext';
+import { useNavigate } from 'react-router-dom';
 
 function ProductDetails() {
-    const images = [
-        "https://bizweb.dktcdn.net/thumb/medium/100/519/812/products/den.png?v=1727671911573",
-        "https://bizweb.dktcdn.net/thumb/medium/100/519/812/products/xam-den-305e9a94-6669-43d9-8856-e76b1cca1ff0.png?v=1727671912567",
-        "https://bizweb.dktcdn.net/thumb/medium/100/519/812/products/do-den.png?v=1727671913517",
-        "https://bizweb.dktcdn.net/thumb/medium/100/519/812/products/xanh-den.png?v=1727671914233",
-    ];
+    const navigate = useNavigate();
+    const userId = localStorage.getItem('user_id');
+    const [searchParams] = useSearchParams();
+    const productID = searchParams.get("product");
+    const [products, setProducts] = useState([]);
+    const [productall, setProductall] = useState([]);
+    const [color, setColor] = useState([]);
+    const [version, setVersion] = useState([]);
+    const [selectedVersion, setSelectedVersion] = useState();
+    const [selectedColor, setSelectedColor] = useState();
+    const [selectedImage, setSelectedImage] = useState();
+    const [totalQuantity, setTotalQuantity] = useState(0);
+    const [loai, setLoai] = useState('');
+    const [thuonghieu, setThuonghieu] = useState('');
+    const [masp, setMasp] = useState('');
+    const [quantity, setQuantity] = useState(1);
+    const { fetchCartCount } = useContext(CartContext);
+    const handleBuyNow = (product) => {
+        if (!selectedColor || !selectedVersion) {
+            alert("Vui lòng chọn màu sắc và phiên bản!");
+            return;
+        }
 
-    const versions = [
-        "Phiên bản Cao Cấp",
-        "Phiên bản Đặc Biệt",
-        "Phiên bản Thể Thao",
-        "Phiên bản Tiêu Chuẩn",
-    ];
+        const selectedProduct = [{
+
+            product: product,
+            ProductID: product.ProductID,
+            Quantity: quantity,
+            CartID: null,
+            ProductColorID: selectedColor?.ProductColorID,
+            ProductVersionID: selectedVersion?.ProductVersionID
+        }];
+
+        navigate('/Checkout', { state: { selectedProducts: selectedProduct } });
+    };
+
+    const increaseQuantity = () => {
+        if (quantity < selectedVersion?.ProductVersionQuantity) {
+            setQuantity(prev => prev + 1);
+        } else {
+            alert("Vượt quá số lượng hiện có!");
+        }
+    };
+
+    const decreaseQuantity = () => {
+        if (quantity > 1) setQuantity(prev => prev - 1);
+    };
+
+    const buildImageUrl = (item) => {
+        return `http://127.0.0.1:8000/image/${item.product.category.parent.CategoryParentName}/${item.product.category.CategoryName}/${item.product.ProductName}/${item.ProductColorImg}`;
+    };
+
+    const fetchProducts = () => {
+        productApi.getproductbyID(productID)
+            .then((res) => {
+                setProducts(res);
+            })
+            .catch((err) => {
+                console.error("Lỗi lấy sản phẩm:", err);
+            })
+
+        productApi.getProductVersionByID(productID)
+            .then((res) => {
+                setVersion(res.data);
+                const total = res.data.reduce((sum, version) => sum + version.ProductVersionQuantity, 0);
+                setTotalQuantity(total);
+            })
+
+        productApi.getProductColorByID(productID)
+            .then((res) => {
+                setColor(res.data);
+                if (res.data.length > 0) {
+                    setSelectedImage(buildImageUrl(res.data[0]));
+                    setLoai(res.data[0].product.category.CategoryName);
+                    setThuonghieu(res.data[0].product.category.parent.CategoryParentName);
+                    setMasp(res.data[0].product.ProductID);
+                }
+            })
+        productApi.getAll()
+            .then((res) => {
+                setProductall(res);
+            })
+            .catch((err) => {
+                console.error("Lỗi lấy sản phẩm:", err);
+            })
+
+    };
+    const isAvailable = totalQuantity > 0;
+    useEffect(() => {
+        if (productID) {
+            fetchProducts();
+        }
+
+
+    }, [productID]);
     const tabs = [
         { id: "description", label: "Mô tả sản phẩm", content: "Nội dung mô tả sản phẩm..." },
         { id: "specs", label: "Thông số kỹ thuật", content: "Nội dung thông số kỹ thuật..." },
@@ -27,9 +115,34 @@ function ProductDetails() {
         { id: "reviews", label: "Đánh giá sản phẩm", content: "Nội dung đánh giá sản phẩm..." },
     ];
     const [activeTab, setActiveTab] = useState(tabs[0].id);
-    const [selectedVersion, setSelectedVersion] = useState(versions[0]);
 
-    const [selectedImage, setSelectedImage] = useState(images[0]);
+    const limitedProducts = productall.slice(0, 5);
+    // console.log("version", selectedVersion.ProductVersionID);
+
+    // add to cart
+    const datacart = {
+        UserID: userId,
+        ProductID: productID,
+        ProductColorID: selectedColor?.ProductColorID,
+        ProductVersionID: selectedVersion?.ProductVersionID,
+        Quantity: quantity,
+    }
+    const handleAddToCart = async () => {
+        if (!selectedColor || !selectedVersion) {
+            alert("Vui lòng chọn màu sắc và phiên bản!");
+            return;
+        }
+        try {
+            cartApi.addtocart(datacart)
+            fetchCartCount();
+            alert("Đã thêm vào giỏ hàng thành công!");
+        } catch (error) {
+            console.error("Lỗi thêm vào giỏ:", error);
+            alert("Có lỗi xảy ra khi thêm vào giỏ hàng.");
+        }
+    };
+
+
     return (
         <>
             <Helmet>
@@ -38,30 +151,30 @@ function ProductDetails() {
             <Crumb
                 name='Sản phẩm' />
             <div className='container mt-5'>
-                <h4>Vario 160</h4>
+                <h4>{products.ProductName}</h4>
                 <div className='row mt-3' style={{ borderBottom: '1px solid #D71920', fontSize: '16px', fontWeight: '600' }}>
                     <div className='col-md-3'>
                         <p>
-                            <sapn style={{ color: '#D71920', marginRight: '8px' }}>Loại:</sapn>
-                            <sapn>Xe tay ga</sapn>
+                            <span style={{ color: '#D71920', marginRight: '8px' }}>Loại:</span>
+                            <span>{loai}</span>
                         </p>
                     </div>
                     <div className='col-md-3'>
                         <p>
-                            <sapn style={{ color: '#D71920', marginRight: '8px' }}>Thương hiệu:</sapn>
-                            <sapn>Honda</sapn>
+                            <span style={{ color: '#D71920', marginRight: '8px' }}>Thương hiệu:</span>
+                            <span>{thuonghieu}</span>
                         </p>
                     </div>
                     <div className='col-md-3'>
                         <p>
-                            <sapn style={{ color: '#D71920', marginRight: '8px' }}>Tình trạng:</sapn>
-                            <sapn>Còn hàng</sapn>
+                            <span style={{ color: '#D71920', marginRight: '8px' }}>Tình trạng:</span>
+                            {totalQuantity > 0 ? <span>Còn hàng</span> : <span>Hết hàng</span>}
                         </p>
                     </div>
                     <div className='col-md-3'>
                         <p>
-                            <sapn style={{ color: '#D71920', marginRight: '8px' }}>Mã sản phẩm:</sapn>
-                            <sapn>Đang cập nhật</sapn>
+                            <span style={{ color: '#D71920', marginRight: '8px' }}>Mã sản phẩm:</span>
+                            <span>XM{masp}</span>
                         </p>
                     </div>
                 </div>
@@ -71,11 +184,15 @@ function ProductDetails() {
                             <img src={selectedImage} alt="Selected" width="100%" />
                         </div>
                         <div className='row mt-3'>
-                            {images.map((img, index) => (
+                            {color.map((img, index) => (
+
                                 <div className='col-md-3'>
 
-                                    <div key={index} className='d-flex align-items-center' style={{ border: selectedImage === img ? "2px solid #D71920" : "2px solid #d8d7d7", height: '113px', borderRadius: '5px', cursor: 'pointer' }}>
-                                        <img src={img} alt={`Option ${index}`} width="100%" onClick={() => setSelectedImage(img)} />
+                                    <div key={index} className='d-flex align-items-center' style={{ border: selectedImage === buildImageUrl(img) ? "2px solid #D71920" : "2px solid #d8d7d7", height: '113px', borderRadius: '5px', cursor: 'pointer' }}>
+                                        <img src={buildImageUrl(img)}
+                                            alt={`Option ${index}`} width="100%"
+                                            onClick={() => setSelectedImage(buildImageUrl(img))}
+                                        />
                                     </div>
 
                                 </div>
@@ -84,12 +201,12 @@ function ProductDetails() {
                     </div>
                     <div className='col-md-4'>
                         <p style={{ fontWeight: '600' }}>Giá bán:</p>
-                        <div className='price-box'>51.990.000
+                        <div className='price-box'>{Number(products.ProductPrice).toLocaleString('vi-VN')}
                             <span className='line-under'>đ</span>
                         </div>
                         <p style={{ fontWeight: '600' }}>Phiên bản:</p>
                         <div className="d-flex flex-wrap gap-2">
-                            {versions.map((version, index) => (
+                            {version.map((version, index) => (
                                 <div
                                     key={index}
                                     variant="outline-dark"
@@ -97,25 +214,43 @@ function ProductDetails() {
                                     style={{ border: selectedVersion === version ? "2px solid #D71920" : "2px solid #d8d7d7", borderRadius: '5px', cursor: 'pointer', padding: '4px' }}
                                     onClick={() => setSelectedVersion(version)}
                                 >
-
-                                    {version}
+                                    {version.ProductVersionName}
                                 </div>
                             ))}
                         </div>
-                        <p style={{ fontWeight: '600', marginTop: '12px' }}>Màu sắc: Xanh</p>
-                        <div className='d-flex align-items-center'>
+                        <p style={{ fontWeight: '600', marginTop: '12px' }}>Màu sắc:</p>
+                        <div className="d-flex flex-wrap gap-2">
+                            {color.map((color, index) => (
+                                <div
+                                    key={index}
+                                    variant="outline-dark"
+                                    className='d-flex align-items-center border-2 '
+                                    style={{ border: selectedColor === color ? "2px solid #D71920" : "2px solid #d8d7d7", borderRadius: '5px', cursor: 'pointer', padding: '4px' }}
+                                    onClick={() => setSelectedColor(color)}
+                                >
+                                    {color.ProductColorName}
+                                </div>
+                            ))}
+                        </div>
+                        <div className='d-flex align-items-center mt-2'>
                             <p className='m-0' style={{ fontWeight: '600' }}>Số lượng:</p>
                             <div className='input-number-product'>
-                                <button>-</button>
-                                <input type='number' value={1} />
-                                <button>+</button>
+                                <button onClick={decreaseQuantity}>-</button>
+                                <input type='number' value={quantity} />
+                                <button onClick={increaseQuantity}>+</button>
 
                             </div>
-                            <button className='addtocart'>Thêm vào giỏ hàng</button>
+                            <button onClick={handleAddToCart} className='addtocart' style={{
+                                cursor: isAvailable ? 'pointer' : 'not-allowed',
+                            }}>Thêm vào giỏ hàng</button>
 
                         </div>
                         <div className='d-flex align-items-center justify-content-between'>
-                            <button className='buynow'>Mua ngay</button>
+                            <button
+                                onClick={() => handleBuyNow(products)}
+                                className='buynow' style={{
+                                    cursor: isAvailable ? 'pointer' : 'not-allowed',
+                                }}>Mua ngay</button>
                             <button className='buynow'>Liên hệ</button>
                         </div>
                         <div className='service-pro mt-4'>
@@ -224,31 +359,19 @@ function ProductDetails() {
                     titleDes='liên quan'
                 ></Title>
                 <div className='ms-4 d-flex'>
-                    <ProductFrame
-                        name='GALAXY 50'
-                        image='https://bizweb.dktcdn.net/100/519/812/products/artboard-12.png?v=1727684685893'
-                        price='18.480.000'
-                    />
-                    <ProductFrame
-                        name='ALGELA 50'
-                        image='https://bizweb.dktcdn.net/100/519/812/products/1-2.png?v=1727684508933'
-                        price='18.730.000'
-                    />
-                    <ProductFrame
-                        name='NEW GALAXY 125'
-                        image='https://bizweb.dktcdn.net/100/519/812/products/1-1-6.jpg?v=1727684143323'
-                        price='25.2000.000'
-                    />
-                    <ProductFrame
-                        name='JUPITER FI'
-                        image='https://bizweb.dktcdn.net/100/519/812/products/2022-t115fs-5ltd-ms1-vnm-004.png?v=1727682487937'
-                        price='30.240.000'
-                    />
-                    <ProductFrame
-                        name='MT-15'
-                        image='https://bizweb.dktcdn.net/100/519/812/products/mt15-gp-004.png?v=1727682058583'
-                        price='69.000.000'
-                    />
+                    {limitedProducts.length > 0 ? (
+                        limitedProducts.map((product) => (
+                            <ProductFrame
+                                id={product.ProductID}
+                                name={product.ProductName}
+                                image={`http://127.0.0.1:8000/image/${product.category.parent.CategoryParentName}/${product.category.CategoryName}/${product.ProductName}/${product.thumbnail}`}
+                                price={product.ProductPrice}
+                            />
+                        ))
+                    ) : (
+                        <p>Không có sản phẩm nào.</p>
+                    )}
+
                 </div>
             </div>
 

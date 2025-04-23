@@ -51,7 +51,6 @@ class ProductColorController extends Controller
             'ProductID'   => $request->ProductID,
             'ProductColorName'  => $request->ProductColorName,
             'ProductColorImg'     => $thumbnailPath,
-            'ProductColorQuantity'  => $request->ProductColorQuantity,
             // đường dẫn đã xử lý
         ]);
         
@@ -94,8 +93,10 @@ class ProductColorController extends Controller
         //
     }
     public function getByProduct($ProductID){
-        $color = ProductColor::where('ProductID', $ProductID)->get();
-
+        
+        $color = ProductColor::with(['product.category.parent'])
+        ->where('ProductID', $ProductID)
+        ->get();
         // Nếu có truyền ID danh mục cha thì lọc theo, ngược lại lấy tất cả
         if ($color->isEmpty()) {
             return response()->json([

@@ -5,6 +5,9 @@ import "../../styles/home.css"
 import ProductFrame from "../../components/ProductFrame";
 import Bt from "../../components/Bt";
 import { Helmet } from "react-helmet-async";
+import productApi from "../../api/productApi";
+import categoryParentApi from "../../api/categoryParentApi";
+
 
 function Home() {
     const [timeLeft, setTimeLeft] = useState({
@@ -13,6 +16,25 @@ function Home() {
         minutes: 58,
         seconds: 24,
     });
+    const [products, setProducts] = useState([]);
+    const [products5, setProducts5] = useState([]);
+    const [products2, setProducts2] = useState([]);
+    const [productbycate, setProductbycate] = useState([]);
+    const [categoryParent, setCategoryParent] = useState([]);
+    const [parentId, setParentId] = useState(1);
+
+
+    const fetchProducts = () => {
+        productApi.getAll()
+            .then((res) => {
+                setProducts(res);
+                setProducts5(res.slice(0, 5));
+                setProducts2(res.slice(0, 2)); // Lấy 5 sản phẩm đầu tiên
+            })
+            .catch((err) => {
+                console.error("Lỗi lấy sản phẩm:", err);
+            });
+    };
 
     // Hàm đếm ngược
     useEffect(() => {
@@ -44,6 +66,36 @@ function Home() {
 
         return () => clearInterval(timer);
     }, []);
+
+    useEffect(() => {
+        fetchProducts();
+        const fetchCategories = async () => {
+            try {
+                const res = await categoryParentApi.getCategoryPrarent(); // tuỳ tên API
+                setCategoryParent(res.data);
+            } catch (error) {
+                console.error("Lỗi lấy category:", error);
+            }
+        };
+
+        fetchCategories();
+
+        const fetchProductsbycate = async () => {
+            try {
+                let res;
+                if (parentId) {
+                    res = await productApi.getproductbyCategoryparent(parentId);
+                }
+                setProductbycate(res.data.slice(0, 8));
+                console.log(res.data);
+            } catch (error) {
+                console.error("Lỗi lấy sản phẩm:", error);
+            }
+        };
+
+        fetchProductsbycate();
+    }, [parentId]);
+
     return (
         <>
             <Helmet>
@@ -97,34 +149,20 @@ function Home() {
 
 
                         <div className='block-product-flash d-flex'>
-                            <ProductFrame
-                                name='GALAXY 50'
-                                image='https://bizweb.dktcdn.net/100/519/812/products/artboard-12.png?v=1727684685893'
-                                price='18.480.000'
-                            />
-                            <ProductFrame
-                                name='ALGELA 50'
-                                image='https://bizweb.dktcdn.net/100/519/812/products/1-2.png?v=1727684508933'
-                                price='18.730.000'
-                            />
-                            <ProductFrame
-                                name='NEW GALAXY 125'
-                                image='https://bizweb.dktcdn.net/100/519/812/products/1-1-6.jpg?v=1727684143323'
-                                price='25.2000.000'
-                            />
-                            <ProductFrame
-                                name='JUPITER FI'
-                                image='https://bizweb.dktcdn.net/100/519/812/products/2022-t115fs-5ltd-ms1-vnm-004.png?v=1727682487937'
-                                price='30.240.000'
-                            />
-                            <ProductFrame
-                                name='MT-15'
-                                image='https://bizweb.dktcdn.net/100/519/812/products/mt15-gp-004.png?v=1727682058583'
-                                price='69.000.000'
-                            />
+
+                            {products5.map((product) => (
+                                <ProductFrame
+                                    id={product.ProductID}
+                                    name={product.ProductName}
+                                    image={`http://127.0.0.1:8000/image/${product.category.parent.CategoryParentName}/${product.category.CategoryName}/${product.ProductName}/${product.thumbnail}`}
+                                    price={product.ProductPrice}
+                                />
+                            ))
+                            }
                         </div>
                         <div className="d-flex align-items-center justify-content-center mt-4 block-product-bt">
                             <Bt
+                                des={'product'}
                                 name='Xem tất cả'
                             />
                         </div>
@@ -149,23 +187,23 @@ function Home() {
                         </div>
                         <div className="col-md-6 mt-5">
                             <div className=" row align-items-center justify-content-center">
-                                <div className="col-md-6 d-flex align-items-center justify-content-end">
-                                    <ProductFrame
-                                        image='https://bizweb.dktcdn.net/100/519/812/products/above-me-only-sky-004.png?v=1727682764433'
-                                        name='Exciter 155 VVA'
-                                        price='54.000.000'
-                                    />
-                                </div>
-                                <div className="col-md-6" style={{ paddingRight: '0' }}>
-                                    <ProductFrame
-                                        image='https://bizweb.dktcdn.net/100/519/812/products/2022-t115fs-5ltd-ms1-vnm-004.png?v=1727682487937'
-                                        name='Jupiter FI'
-                                        price='30.240.000'
-                                    />
-                                </div>
+                                {products2.map((product) => (
+                                    <div className="col-md-6 d-flex align-items-center justify-content-end me-0">
+
+                                        <ProductFrame
+                                            id={product.ProductID}
+                                            name={product.ProductName}
+                                            image={`http://127.0.0.1:8000/image/${product.category.parent.CategoryParentName}/${product.category.CategoryName}/${product.ProductName}/${product.thumbnail}`}
+                                            price={product.ProductPrice}
+                                        />
+
+                                    </div>
+                                ))
+                                }
                             </div>
                             <div className="d-flex align-items-center justify-content-center mt-3 block-product-bt">
                                 <Bt
+                                    des={'product'}
                                     name='Xem thêm'
                                 />
                             </div>
@@ -178,56 +216,31 @@ function Home() {
                     ></Title>
                     <div className='d-flex align-items-center justify-content-center category-all mt-3'>
                         <ul className='d-flex'>
-                            <li className="category-all_active">Honda</li>
-                            <li>Yamaha</li>
-                            <li>SYM</li>
+                            {categoryParent.map((cat) => (
+                                <li
+                                    onClick={() => setParentId(cat.CategoryParentID)}
+                                    className={`${parentId === cat.CategoryParentID
+                                        ? 'category-all_active'
+                                        : 'bg-white text-black'
+                                        }`} >
+                                    {cat.CategoryParentName}
+                                </li>
+                            ))}
                         </ul>
                     </div>
                     <div className="d-flex flex-wrap mt-3 " style={{ rowGap: '20px' }}>
                         <div className=" image-hover1" style={{ height: 'auto', marginRight: '20px' }}>
                             <img style={{ width: '486px', height: '336px' }} src="https://bizweb.dktcdn.net/100/519/812/files/dm12.png?v=1727830403260" />
                         </div>
-                        <ProductFrame
-                            name='MT-15'
-                            image='https://bizweb.dktcdn.net/100/519/812/products/mt15-gp-004.png?v=1727682058583'
-                            price='69.000.000'
-                        />
-                        <ProductFrame
-                            name='MT-15'
-                            image='https://bizweb.dktcdn.net/100/519/812/products/mt15-gp-004.png?v=1727682058583'
-                            price='69.000.000'
-                        />
-                        <ProductFrame
-                            name='MT-15'
-                            image='https://bizweb.dktcdn.net/100/519/812/products/mt15-gp-004.png?v=1727682058583'
-                            price='69.000.000'
-                        />
-                        <ProductFrame
-                            name='MT-15'
-                            image='https://bizweb.dktcdn.net/100/519/812/products/mt15-gp-004.png?v=1727682058583'
-                            price='69.000.000'
-                        />
-                        <ProductFrame
-                            name='MT-15'
-                            image='https://bizweb.dktcdn.net/100/519/812/products/mt15-gp-004.png?v=1727682058583'
-                            price='69.000.000'
-                        />
-                        <ProductFrame
-                            name='MT-15'
-                            image='https://bizweb.dktcdn.net/100/519/812/products/mt15-gp-004.png?v=1727682058583'
-                            price='69.000.000'
-                        />
-                        <ProductFrame
-                            name='MT-15'
-                            image='https://bizweb.dktcdn.net/100/519/812/products/mt15-gp-004.png?v=1727682058583'
-                            price='69.000.000'
-                        />
-                        <ProductFrame
-                            name='MT-15'
-                            image='https://bizweb.dktcdn.net/100/519/812/products/mt15-gp-004.png?v=1727682058583'
-                            price='69.000.000'
-                        />
-
+                        {productbycate.map((product) => (
+                            <ProductFrame
+                                key={product.ProductID}
+                                id={product.ProductID}
+                                name={product.ProductName}
+                                image={`http://127.0.0.1:8000/image/${product.category.parent.CategoryParentName}/${product.category.CategoryName}/${product.ProductName}/${product.thumbnail}`}
+                                price={product.ProductPrice}
+                            />
+                        ))}
                     </div>
                     {/*  */}
                     <div className="row mt-5">

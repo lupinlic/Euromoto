@@ -1,51 +1,115 @@
 import React, { useState, useEffect } from "react";
+import axios from 'axios';
+import addressApi from '../api/addressApi';
 
-const AddressForm = ({ onClose }) => {
+const AddressForm = ({ onClose, onUpdate }) => {
+    const userId = localStorage.getItem('user_id');
+    const [fullName, setFullName] = useState("");
+    const [email, setEmail] = useState("");
+    const [phone, setPhone] = useState("");
+    const [specificAddress, setSpecificAddress] = useState("");
     const [provinces, setProvinces] = useState([]);
     const [districts, setDistricts] = useState([]);
-    const [wards, setWards] = useState([]);
-    const [selectedProvince, setSelectedProvince] = useState("");
-    const [selectedDistrict, setSelectedDistrict] = useState("");
+    const [communes, setCommunes] = useState([]);
+    const [selectedProvince, setSelectedProvince] = useState('');
+    const [selectedDistrict, setSelectedDistrict] = useState('');
+    const [selectedCommune, setSelectedCommune] = useState('');
     useEffect(() => {
-        fetch("https://api.mysupership.vn/v1/partner/areas/province")
-            .then((res) => res.json())
-            .then((data) => setProvinces(data.results))
-            .catch((err) => console.error(err));
+        axios.get('https://api.mysupership.vn/v1/partner/areas/province')
+            .then(response => {
+                setProvinces(response.data.results);
+                console.log(response.data.results)
+
+            })
+            .catch(error => {
+                console.error('Error fetching provinces:', error);
+            });
     }, []);
 
+    // Lấy danh sách Huyện khi chọn Tỉnh
     const handleProvinceChange = (e) => {
         const provinceId = e.target.value;
-        setSelectedProvince(provinceId);
-        setDistricts([]);
-        setWards([]);
+        const provinceName = provinces.find(province => province.code === e.target.value);
+        console.log(provinceName.name)
+        setSelectedProvince(provinceName.name);
 
-        fetch(`https://api.mysupership.vn/v1/partner/areas/district?province=${provinceId}`)
-            .then((res) => res.json())
-            .then((data) => setDistricts(data.results))
-            .catch((err) => console.error(err));
+
+        setSelectedDistrict(''); // Reset huyện
+        setCommunes([]); // Reset xã
+
+        if (provinceId) {
+            axios.get('https://api.mysupership.vn/v1/partner/areas/district', {
+                params: { province: provinceId }
+            })
+                .then(response => {
+                    setDistricts(response.data.results);
+                })
+                .catch(error => {
+                    console.error('Error fetching districts:', error);
+                });
+        } else {
+            setDistricts([]);
+        }
     };
-
+    // Lấy danh sách Xã khi chọn Huyện
     const handleDistrictChange = (e) => {
         const districtId = e.target.value;
-        setSelectedDistrict(districtId);
-        setWards([]);
+        const districtName = districts.find(district => district.code === e.target.value);
+        setSelectedDistrict(districtName.name);
 
-        fetch(`https://api.mysupership.vn/v1/partner/areas/ward?district=${districtId}`)
-            .then((res) => res.json())
-            .then((data) => setWards(data.results))
-            .catch((err) => console.error(err));
+
+        if (districtId) {
+            axios.get('https://api.mysupership.vn/v1/partner/areas/commune', {
+                params: { district: districtId }
+            })
+                .then(response => {
+                    setCommunes(response.data.results);
+                })
+                .catch(error => {
+                    console.error('Error fetching communes:', error);
+                });
+        } else {
+            setCommunes([]);
+        }
     };
+    const handleCommuneChange = (e) => {
+        const communeId = e.target.value;
+        const communeName = communes.find(commune => commune.code === e.target.value);
+        setSelectedCommune(communeName.name);
+    }
+
+    const data = {
+        UserID: userId,
+        FullName: fullName,
+        Email: email,
+        PhoneNumber: phone,
+        SpecificAddress: specificAddress,
+        Provinces: selectedProvince,
+        Districts: selectedDistrict,
+        isDefault: 0,
+        Wards: selectedCommune
+    }
+    console.log(data)
+    function handleaddAdress() {
+        addressApi.addAdress(data)
+            .then(() => {
+                console.log("Thêm địa chỉ thành công");
+                onUpdate();
+                onClose();
+            })
+    }
     return (
         <>
             <div className="form-popup">
                 <h6>Thêm địa chỉ mới</h6>
-                <input type='text' placeholder='Họ tên' />
-                <input type='text' placeholder='Số điện thoại' />
-                <input type='text' placeholder='Địa chỉ' />
+                <input type='text' placeholder='Họ tên' value={fullName} onChange={(e) => setFullName(e.target.value)} />
+                <input type='text' placeholder='Số điện thoại' value={phone} onChange={(e) => setPhone(e.target.value)} />
+                <input type='text' placeholder='Email' value={email} onChange={(e) => setEmail(e.target.value)} />
+                <input type='text' placeholder='Địa chỉ' value={specificAddress} onChange={(e) => setSpecificAddress(e.target.value)} />
                 <div className="row mt-4">
                     <div className="col-md-4">
-                        <select onChange={handleProvinceChange} value={selectedProvince}>
-                            <option value="">Tỉnh thành</option>
+                        <select value={selectedProvince} onChange={handleProvinceChange}>
+                            <option value="">Chọn Tỉnh</option>
                             {provinces.map((p) => (
                                 <option key={p.code} value={p.code}>
                                     {p.name}
@@ -55,8 +119,8 @@ const AddressForm = ({ onClose }) => {
 
                     </div>
                     <div className="col-md-4">
-                        <select onChange={handleDistrictChange} value={selectedDistrict} disabled={!selectedProvince}>
-                            <option value="">Quận huyện</option>
+                        <select value={selectedDistrict} onChange={handleDistrictChange} disabled={!selectedProvince}>
+                            <option value="">Chọn Huyện</option>
                             {districts.map((d) => (
                                 <option key={d.code} value={d.code}>
                                     {d.name}
@@ -66,9 +130,9 @@ const AddressForm = ({ onClose }) => {
 
                     </div>
                     <div className="col-md-4">
-                        <select disabled={!selectedDistrict}>
-                            <option value="">Phường xã</option>
-                            {wards.map((w) => (
+                        <select disabled={!selectedDistrict} value={selectedCommune} onChange={handleCommuneChange}>
+                            <option value="">Chọn Xã</option>
+                            {communes.map((w) => (
                                 <option key={w.code} value={w.code}>
                                     {w.name}
                                 </option>
@@ -79,7 +143,7 @@ const AddressForm = ({ onClose }) => {
 
                 </div>
                 <div className="mt-4 float-end">
-                    <button type="submit" className="btn btn-primary">Lưu</button>
+                    <button type="submit" className="btn btn-primary" onClick={handleaddAdress}>Lưu</button>
                     <button type="button" className="ms-3 btn btn-secondary" onClick={onClose}>Đóng</button>
                 </div>
             </div>

@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import "../styles/productFrame.css"
 import { useNavigate } from "react-router-dom";
 
-const ProductFrame = ({ image, name, price }) => {
+const ProductFrame = ({ image, name, price, id }) => {
     const [liked, setLiked] = useState(false);
     const [message, setMessage] = useState("");
     const navigate = useNavigate();
 
     const handleToProductDetails = () => {
-        navigate("/ProductDetails"); // Chuyển đến trang mới
+        navigate(`/ProductDetails?product=${id}`);
     };
     const handleClick = () => {
         setLiked(!liked);
@@ -32,7 +32,7 @@ const ProductFrame = ({ image, name, price }) => {
                 </div>
                 <div className='product-info'>
                     <h4>{name}</h4>
-                    <div className='price-box'>{price}
+                    <div className='price-box'>{Number(price).toLocaleString('vi-VN')}
                         <span className='line-under'>đ</span>
                     </div>
                 </div>

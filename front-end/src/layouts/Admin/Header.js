@@ -1,10 +1,18 @@
 
 import { Link } from 'react-router-dom';
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function Header() {
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const settingsRef = useRef(null);
+    const navigate = useNavigate();
+    const handleLogout = () => {
+        // setShowLogin(true);
+        localStorage.clear();
+        navigate('/Login')
+
+    };
     const toggleSettings = () => {
         setIsSettingsOpen(prev => !prev);
 
@@ -37,7 +45,7 @@ function Header() {
                                 <li><Link to=''><i class="fas fa-user" style={{ paddingRight: '8px', color: '#62677399', textDecoration: 'none' }}></i>Profile</Link></li>
                                 <li><Link to=''><i class="fas fa-cog" style={{ paddingRight: '8px', color: '#62677399', textDecoration: 'none' }}></i>Settings</Link></li>
                                 <li><Link to=''><i class="fas fa-lock" style={{ paddingRight: '8px', color: '#62677399', textDecoration: 'none' }}></i>Lock Screen</Link></li>
-                                <li className='pt-2'><Link to='/Login'><i class="fas fa-cog" style={{ paddingRight: '8px', color: '#62677399', textDecoration: 'none' }}></i>
+                                <li className='pt-2' onClick={handleLogout}><Link to='/Login'><i class="fas fa-cog" style={{ paddingRight: '8px', color: '#62677399', textDecoration: 'none' }}></i>
                                     Logout</Link></li>
                             </ul>
                         </div>

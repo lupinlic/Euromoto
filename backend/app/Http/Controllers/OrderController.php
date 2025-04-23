@@ -35,15 +35,15 @@ class OrderController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(OrderRequest $request)
+    public function store(Request $request)
     {
         //
         $order = Order::create([
             'CustomerID' => $request->CustomerID,
             'AddressID' => $request->AddressID,
-            'OrderDate' => now(),
-            'OrderStatus' => 'Chờ xác nhận',
-            'TotalPrice' => 0, // sẽ cập nhật sau
+            'OrderDate' => $request->OrderDate,
+            'status' => 'Chờ xác nhận',
+            'TotalPrice' => $request->TotalPrice, // sẽ cập nhật sau
             'PaymentMethod' => $request->PaymentMethod,
         ]);
         
@@ -56,7 +56,7 @@ class OrderController extends Controller
 
         $price = $product->ProductPrice ?? 0;
 
-        $orderItem = $order->items()->create([
+        $order->items()->create([
             'ProductID' => $item['ProductID'],
             'ProductVersionID' => $item['ProductVersionID'] ?? null,
             'ProductColorID' => $item['ProductColorID'] ?? null,
@@ -66,8 +66,6 @@ class OrderController extends Controller
         $totalPrice += $price * $item['Quantity'];
     }
 
-    // Cập nhật lại tổng tiền
-    $order->update(['TotalPrice' => $totalPrice]);
 
     return response()->json([
         'message' => 'Đặt hàng thành công',

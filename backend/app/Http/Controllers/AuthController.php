@@ -52,9 +52,10 @@ class AuthController extends Controller
     }
 
     // Lấy thông tin người dùng
-    public function user(Request $request)
+    public function userID(Request $request)
     {
-        return response()->json($request->user());
+        $userID= $request->user()->UserID();
+        return $userID;
     }
 
     // Đăng xuất

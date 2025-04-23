@@ -31,7 +31,7 @@ const publicRoutes = [
         path: '/Register', component: Register
     },
     {
-        path: '/Product', component: Product
+        path: '/Product', component: Product,
     },
     {
         path: '/ProductDetails', component: ProductDetails

@@ -1,9 +1,55 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import "../../styles/header.css"
 import { Link } from 'react-router-dom'
 import { NavLink } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
+import categoryApi from '../../api/categoryApi';
+import categoryParentApi from '../../api/categoryParentApi';
+import { useContext } from 'react';
+import { CartContext } from '../../contexts/CartContext';
 
 function Header() {
+    const { cartCount } = useContext(CartContext);
+    const userId = localStorage.getItem('user_id');
+    const navigate = useNavigate();
+    const handleLogout = () => {
+        // setShowLogin(true);
+        localStorage.clear();
+        navigate('/Login')
+
+    };
+    const [category, setCategory] = useState([]);
+    const [categoryParent, setCategoryParent] = useState([]);
+    // api
+    const fetchCategory = async () => {
+        try {
+            const parentRes = await categoryParentApi.getCategoryPrarent();
+            const parentData = parentRes.data;
+            setCategoryParent(parentData);
+
+            const promises = parentData.map(parent =>
+                categoryApi.getCategorybyPrarent(parent.CategoryParentID)
+                    .then(res => ({ [parent.CategoryParentID]: res.data }))
+            );
+
+            const results = await Promise.all(promises);
+
+            // Gộp tất cả các object lại thành 1 object
+            const combinedCategory = results.reduce((acc, cur) => {
+                return { ...acc, ...cur };
+            }, {});
+
+            setCategory(combinedCategory);
+        } catch (error) {
+            console.error('Có lỗi khi lấy danh mục cha:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchCategory();
+    }, []);
+
+
     return (
         <div className='header container'>
             <div className='h-100 row align-items-center'>
@@ -22,18 +68,43 @@ function Header() {
                                         Hệ thống cửa hàng
                                     </li>
                                 </Link>
-                                <Link to='/Account'>
-                                    <li>
-                                        <i class="fas fa-user"></i>
-                                        Tài khoản
-                                    </li>
-                                </Link>
-                                <Link to='/Login'>
-                                    <li>
-                                        <i class="fas fa-sign-out-alt"></i>
-                                        Đăng xuất
-                                    </li>
-                                </Link>
+                                {
+                                    userId ? (
+                                        <>
+                                            <Link to='/Account'>
+                                                <li>
+                                                    <i class="fas fa-user"></i>
+                                                    Tài khoản
+                                                </li>
+                                            </Link>
+                                            <Link to='/Login'>
+
+                                                <li onClick={handleLogout} >
+                                                    <i class="fas fa-sign-out-alt"></i>
+                                                    Đăng xuất
+                                                </li>
+                                            </Link>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Link to='/Login'>
+                                                <li>
+                                                    <i class="fas fa-user"></i>
+                                                    Đăng nhập
+                                                </li>
+                                            </Link>
+                                            <Link to='/Register'>
+
+                                                <li onClick={handleLogout} >
+                                                    <i class="fas fa-sign-out-alt"></i>
+                                                    Đăng ký
+                                                </li>
+                                            </Link>
+                                        </>
+                                    )
+                                }
+
+
                             </ul>
                         </div>
                         <div className='col-md-4 social-icons align-items-center justify-content-center'>
@@ -61,43 +132,18 @@ function Header() {
                                 </NavLink>
                                 <Link className='position-relative header-menu-parent'>
                                     <li>Sản phẩm</li>
+
                                     <div className="dropdown-cate-item position-absolute d-flex align-items-center header-menu-child ">
-                                        <ul> <Link style={{ color: 'red' }} to='/Product'>Honda</Link>
-                                            <Link to='/Product'>
-                                                <li>Xe ga</li>
-                                            </Link>
-                                            <Link to=''>
-                                                <li>Xe côn tay</li>
-                                            </Link>
-                                            <Link to=''>
-                                                <li>Xe số</li>
-                                            </Link>
+                                        {categoryParent.map((parent) => (
+                                            <ul key={parent.CategoryParentID}> <Link style={{ color: 'red' }} to={`/Product?parent=${parent.CategoryParentID}`}>{parent.CategoryParentName}</Link>
+                                                {category[parent.CategoryParentID]?.map((child) => (
+                                                    <Link key={child.CategoryID} to={`/Product?category=${child.CategoryID}`}>
+                                                        <li>{child.CategoryName}</li>
+                                                    </Link>
+                                                ))}
 
-                                        </ul>
-                                        <ul><Link style={{ color: 'red' }} to='/Product'>Yamaha</Link>
-                                            <Link to=''>
-                                                <li>Xe ga</li>
-                                            </Link>
-                                            <Link to=''>
-                                                <li>Xe thể thao</li>
-                                            </Link>
-                                            <Link to=''>
-                                                <li>Xe số</li>
-                                            </Link>
-
-                                        </ul>
-                                        <ul> <Link style={{ color: 'red' }} to='/Product'>SYM</Link>
-                                            <Link to=''>
-                                                <li>Xe ga</li>
-                                            </Link>
-                                            <Link to=''>
-                                                <li>Xe côn tay</li>
-                                            </Link>
-                                            <Link to=''>
-                                                <li>Xe số</li>
-                                            </Link>
-
-                                        </ul>
+                                            </ul>
+                                        ))}
                                     </div>
 
                                 </Link>
@@ -126,7 +172,7 @@ function Header() {
                             <Link to='/Cart'>
                                 <div className="icon">
                                     <i className="fas fa-shopping-cart" />
-                                    <span className="badge">5</span>
+                                    <span className="badge">{cartCount}</span>
                                 </div>
                             </Link>
 
