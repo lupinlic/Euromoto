@@ -7,6 +7,8 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CategoryParentController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\FavoriteProductController;
+use App\Http\Controllers\feedbackController;
+use App\Http\Controllers\NewsController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductColorController;
 use App\Http\Controllers\ProductController;
@@ -28,7 +30,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/change-password', [UserController::class, 'changePassword']);
 // user
     Route::get('user/{id}', [UserController::class, 'show']);
-    Route::put('user/{id}', [ProductController::class, 'update']);
+    Route::put('user/{id}', [UserController::class, 'update']);
     // địa chỉ
     Route::apiResource('address',AddressController::class)->only('destroy','update','store','index','show');
     Route::get('/address/user/{user_id}', [AddressController::class, 'getAddressesByUser']);
@@ -50,9 +52,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/order/place', [OrderController::class, 'store']);
     Route::get('order', [OrderController::class, 'index']);
     Route::get('customer/getorder/{id}', [CustomerController::class, 'getOrderOfCustomer']);
-
+    // feedback
+    Route::apiResource('feedback',feedbackController::class)->only('destroy','store','index');
+    // tin tức
+    Route::apiResource('news',NewsController::class)->only('index','show');
 // admin
     Route::middleware('check.admin')->group(function () {
+        // người dùng
+        Route::get('user', [UserController::class, 'index']);
+        Route::delete('user/{id}', [UserController::class, 'destroy']);
         // sản phẩm
         Route::post('products', [ProductController::class, 'store']);
         Route::put('products/{id}', [ProductController::class, 'update']); // Sửa
@@ -65,7 +73,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('productversion',ProductVersionController::class)->only('destroy','update','store','show');
         //    màu sắc
         Route::apiResource('productcolor',ProductColorController::class)->only('destroy','update','store','show');
-
+        // tin tức
+        Route::apiResource('news',NewsController::class)->only('destroy','update','store');
     });
 });
 // công khai

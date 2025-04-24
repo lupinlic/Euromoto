@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import AccountForm from './AccountForm';
+import authUser from '../../../api/authUser';
 
 function Account() {
     const [isFormVisible, setIsFormVisible] = useState(false);
+    const [user, setUser] = useState(null);
     const openForm = () => {
         // setSelectedUserId(userId);
         setIsFormVisible(true);
@@ -12,6 +14,19 @@ function Account() {
     const closeForm = () => {
         setIsFormVisible(false);
     };
+
+    // Lấy danh sách tài khoản
+    const getAllUser = async () => {
+        try {
+            const response = await authUser.get_all();
+            setUser(response.data);
+        } catch (error) {
+            console.error('Có lỗi khi lấy danh sách tài khoản:', error);
+        }
+    };
+    useEffect(() => {
+        getAllUser();
+    }, []);
     return (
         <div>
             <div style={{ backgroundColor: '#fff', minHeight: '100vh', paddingLeft: '4px' }}>
@@ -38,8 +53,7 @@ function Account() {
                             </tr>
                         </thead>
                         <tbody>
-                            {/* {suppliers.map((supplier, index) => (key={index} */}
-                            {/* {data.map(item => ( */}
+
                             <tr>
                                 <td></td>
                                 <td></td>

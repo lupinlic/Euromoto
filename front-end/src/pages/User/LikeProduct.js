@@ -11,7 +11,6 @@ function LikeProduct() {
         try {
             const response = await favoriteProductApi.getfavorites(userId);
             setFavoriteProducts(response.data);
-            console.log(response.data);
         } catch (error) {
             console.error('Có lỗi khi lấy sản phẩm yêu thích:', error);
         }
@@ -19,6 +18,10 @@ function LikeProduct() {
     useEffect(() => {
         fetchfavoriteProducts();
     }, [userId]);
+
+    const handleUnfavorite = (productId) => {
+        setFavoriteProducts(prev => prev.filter(product => product.ProductID !== productId));
+    };
     return (
         <div>
             <Helmet>
@@ -35,6 +38,7 @@ function LikeProduct() {
                                 name={product.ProductName}
                                 image={`http://127.0.0.1:8000/image/${product.CategoryParentName}/${product.CategoryName}/${product.ProductName}/${product.thumbnail}`}
                                 price={product.ProductPrice}
+                                onUnfavorite={handleUnfavorite}
                             />
                         ))
                     ) : (

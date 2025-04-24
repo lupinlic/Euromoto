@@ -9,12 +9,16 @@ import { useContext } from 'react';
 import { CartContext } from '../../contexts/CartContext';
 
 function Header() {
-    const { cartCount } = useContext(CartContext);
+    const { cartCount, favoriteCount } = useContext(CartContext);
+    const { setCartCount, setFavoriteCount } = useContext(CartContext);
+    const { fetchCartCount } = useContext(CartContext);
+    const { fetchfavoriteCount } = useContext(CartContext);
     const userId = localStorage.getItem('user_id');
     const navigate = useNavigate();
     const handleLogout = () => {
-        // setShowLogin(true);
         localStorage.clear();
+        setCartCount(0);
+        setFavoriteCount(0);
         navigate('/Login')
 
     };
@@ -166,7 +170,7 @@ function Header() {
                             <Link to='/LikeProduct'>
                                 <div className="icon">
                                     <i className="fas fa-heart" />
-                                    <span className="badge">3</span>
+                                    <span className="badge">{favoriteCount}</span>
                                 </div>
                             </Link>
                             <Link to='/Cart'>

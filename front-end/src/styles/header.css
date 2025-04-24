@@ -132,6 +132,7 @@
     transform: translateY(20px);
     transition: all 0.3s ease-in-out;
     visibility: hidden;
+    z-index: 1000;
 }
 
 .header-menu-parent:hover .dropdown-cate-item {

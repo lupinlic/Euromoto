@@ -1,24 +1,56 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from 'react';
+import { CartContext } from '../contexts/CartContext';
+import favoriteProductApi from '../api/favoriteProductApi';
 import "../styles/productFrame.css"
 import { useNavigate } from "react-router-dom";
 
-const ProductFrame = ({ image, name, price, id }) => {
-    const [liked, setLiked] = useState(false);
+const ProductFrame = ({ image, name, price, id, onUnfavorite }) => {
+    const { fetchfavoriteCount } = useContext(CartContext);
+    const user_Id = localStorage.getItem('user_id');
     const [message, setMessage] = useState("");
+    const { favorites, setFavorites, userId } = useContext(CartContext);
+    const [isFavorited, setIsFavorited] = useState(false);
     const navigate = useNavigate();
 
     const handleToProductDetails = () => {
         navigate(`/ProductDetails?product=${id}`);
     };
-    const handleClick = () => {
-        setLiked(!liked);
+    useEffect(() => {
+        // Kiểm tra xem sản phẩm đã yêu thích chưa khi component được render
+        const isProductFavorited = favorites.some(item => item.ProductID === id);
+        setIsFavorited(isProductFavorited);
+    }, [favorites, id]);
 
-        // Cập nhật thông báo
-        setMessage(liked ? "Đã xóa khỏi danh sách yêu thích" : "Đã thêm vào danh sách yêu thích");
+    const handleToggleFavorite = async () => {
+        if (!user_Id) {
+            alert('Bạn cần đăng nhập để sử dụng tính năng này!');
+            return;
+        }
 
-        // Tự động ẩn thông báo sau 2 giây
+        try {
+            // Gọi API để thêm/xóa sản phẩm khỏi yêu thích
+            const response = await favoriteProductApi.togglefavorites(user_Id, id);
+            console.log('Toggle response:', response);
+
+            if (response.favorited) {
+                setFavorites(prevFavorites => [...prevFavorites, { ProductID: id, name, price, image }]);
+                setMessage("Đã thêm vào danh sách yêu thích");
+            } else {
+                setFavorites(prev => prev.filter(item => item.ProductID !== id));
+                setMessage("Đã xóa khỏi danh sách yêu thích");
+                if (onUnfavorite) {
+                    onUnfavorite(id);
+                }
+            }
+            setIsFavorited(response);
+            await fetchfavoriteCount();
+            console.log("Đã gọi fetchfavoriteCount");
+        } catch (error) {
+            console.error('Error toggling favorite', error);
+        }
         setTimeout(() => setMessage(""), 2000);
     };
+
     return (
         <>
             <div className='product-card'>
@@ -37,9 +69,9 @@ const ProductFrame = ({ image, name, price, id }) => {
                     </div>
                 </div>
                 <div
-                    className={`heart ${liked ? "liked" : ""}`}
-                    onClick={handleClick}>
-                    {liked ? <i class="fa-solid fa-heart"></i> : <i class="fa-regular fa-heart"></i>}
+                    className={`heart ${isFavorited ? "liked" : ""}`}
+                    onClick={() => handleToggleFavorite()}>
+                    {isFavorited ? <i className="fa-solid fa-heart"></i> : <i className="fa-regular fa-heart"></i>}
                 </div>
                 {message && <div style={{ padding: '8px', position: 'absolute', width: '200px', height: '70px', border: '1px solid red', background: '#fff', color: 'red', top: '50%', right: '50%', zIndex: '10' }}>
                     {message}

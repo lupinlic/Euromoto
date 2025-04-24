@@ -14,6 +14,12 @@ class UserController extends Controller
     public function index()
     {
         //
+        $user = User::all();
+        
+        return response()->json([
+            "message" => "đã lấy danh mục thành công",
+            "data" => $user,
+        ]);
     }
 
     /**
@@ -30,6 +36,11 @@ class UserController extends Controller
     public function store(Request $request)
     {
         //
+        $feedback = User::create($request->all());
+        return response()->json([
+            "message" => "đã tạo danh mục thành công",
+            "data" => $feedback,
+        ]);
     }
 
     /**
@@ -87,9 +98,22 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($fbID)
     {
         //
+        $user = User::find($fbID);
+        
+
+    if (!$user) {
+        return response()->json([
+            "message" => "Không tìm thấy danh mục cần xóa"
+        ], 404);
+    }
+        $user->delete();
+
+        return response()->json([
+            "message" => "đã xóa danh mục thành công"
+        ]);
     }
     public function changePassword(Request $request){
         $user = User::find($request->id);

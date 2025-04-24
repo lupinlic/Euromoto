@@ -1,7 +1,47 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Crumb from '../../components/Crumb'
 import { Helmet } from "react-helmet-async";
+import customerApi from '../../api/customerApi';
+import feedbackApi from '../../api/feedbackApi';
+
 function Contact() {
+    const userId = localStorage.getItem('user_id');
+    const [customer, setCustomer] = useState();
+    const [content, setContent] = useState();
+
+    const getCustomer = () => {
+
+        customerApi.getByIdUser(userId)
+            .then(response => {
+                setCustomer(response.data)
+                console.log(response.data)
+            }
+            )
+            .catch(error => {
+                console.error('Có lỗi khi lấy khách hàng ' + error + '-' + error.response.data.message)
+            })
+
+    }
+    useEffect(() => {
+        getCustomer()
+    }, [userId])
+
+    const data = {
+        CustomerID: customer?.CustomerID,
+        Content: content
+    }
+    const handleSubmit = () => {
+        feedbackApi.sentfeedback(data)
+            .then(response => {
+                console.log(response.data)
+                alert('Gửi thông tin thành công!')
+                setContent("");
+            })
+            .catch(error => {
+                console.error('Có lỗi khi gửi thông tin ' + error + '-' + error.response.data.message)
+            })
+    }
+
     return (
         <div>
             <Helmet>
@@ -64,11 +104,13 @@ function Contact() {
                     <div className='col-md-6'>
                         <p style={{ fontSize: '24px', color: '#d71920' }}>Liên hệ với chúng tôi</p>
                         <p>Nếu bạn có thắc mắc gì, có thể gửi yêu cầu cho chúng tôi, và chúng tôi sẽ liên lạc lại với bạn sớm nhất có thể .</p>
-                        <input type='text' placeholder='Họ tên' />
-                        <input type='text' placeholder='Email' />
-                        <input type='text' placeholder='Điện thoại' />
-                        <textarea placeholder='Nội dung'></textarea>
-                        <button>Gửi thông tin</button>
+
+                        <input type='text' placeholder='Họ tên' value={customer?.FullName || ''} readOnly />
+                        <input type='text' placeholder='Email' value={customer?.Email || ''} readOnly />
+                        <input type='text' placeholder='Điện thoại' value={customer?.PhoneNumber || ''} readOnly />
+
+                        <textarea placeholder='Nội dung' onChange={(e) => (setContent(e.target.value))}></textarea>
+                        <button onClick={() => handleSubmit()}>Gửi thông tin</button>
                     </div>
                 </div>
                 <div className='mt-5'>

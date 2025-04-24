@@ -16,6 +16,7 @@ import Question from "../pages/User/Question";
 import StoreSystem from "../pages/User/StoreSystem";
 import LikeProduct from "../pages/User/LikeProduct";
 import News from "../pages/User/News";
+import NewDetails from "../pages/User/NewsDetails";
 // admin
 import Accounts from "../pages/Admin/Accounts/Account";
 import Category from "../pages/Admin/Category/Category";
@@ -66,6 +67,12 @@ const publicRoutes = [
     {
         path: '/News', component: News
     },
+    {
+        path: '/NewsDetails/:id', component: NewDetails, Element: NewDetails
+    },
+
+
+    // admin
     {
         path: '/Admin', component: HomeAd, layout: Admin
     },

@@ -22,6 +22,15 @@ const authUser = {
   },
   changepass(data) {
     return axiosClient.post('/change-password', data);
+  },
+  get_all() {
+    return axiosClient.get('/user');
+  },
+  delete_user(id) {
+    return axiosClient.delete(`/user/${id}`);
+  },
+  update_user(id, data) {
+    return axiosClient.put(`/user/${id}`, data);
   }
 };
 

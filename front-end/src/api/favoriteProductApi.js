@@ -4,8 +4,11 @@ const favoriteProductApi = {
     getfavorites(id) {
         return axiosClient.get(`favorite/byuser/${id}`);
     },
-    addfavorites(data) {
-        return axiosClient.post('/favorite', data);
+    togglefavorites(user_id, productid) {
+        return axiosClient.post('/favorites', {
+            UserID: user_id,
+            ProductID: productid
+        });
     }
 
 };

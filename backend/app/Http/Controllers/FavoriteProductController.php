@@ -98,8 +98,8 @@ class FavoriteProductController extends Controller
     public function toggleFavorite(Request $request)
     {
         // Tìm sản phẩm yêu thích của user
-        $userId = $request->input('UserID');
-        $productId = $request->input('ProductID');
+        $userId = $request->UserID;
+        $productId = $request->ProductID;
     
         // Lấy customer_id từ bảng customer dựa theo user_id
         $customer = Customer::where('UserID', $userId)->first();
