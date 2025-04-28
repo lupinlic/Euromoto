@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import addressApi from '../api/addressApi';
 
-const AddressForm = ({ onClose, onUpdate }) => {
+const AddressForm = ({ onClose, onSuccess }) => {
     const userId = localStorage.getItem('user_id');
     const [fullName, setFullName] = useState("");
     const [email, setEmail] = useState("");
@@ -94,7 +94,7 @@ const AddressForm = ({ onClose, onUpdate }) => {
         addressApi.addAdress(data)
             .then(() => {
                 console.log("Thêm địa chỉ thành công");
-                onUpdate();
+                onSuccess();
                 onClose();
             })
     }

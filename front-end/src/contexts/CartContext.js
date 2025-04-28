@@ -55,8 +55,8 @@ export const CartProvider = ({ children }) => {
         <CartContext.Provider value={{
             cartCount, setCartCount,
             favoriteCount, setFavoriteCount,
-            favorites, setFavorites,
-            fetchfavoriteCount,
+            favorites, setFavorites, fetchCartCount,
+            fetchfavoriteCount
         }}>
             {children}
         </CartContext.Provider>

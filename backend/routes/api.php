@@ -13,8 +13,11 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductColorController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductVersionController;
+use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\UserController;
+use App\Mail\PaymentConfirmation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/user', function (Request $request) {
@@ -23,6 +26,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+// login fb , gg
+Route::get('auth/google', [SocialAuthController::class, 'redirectToGoogle']);
+Route::get('auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback']);
+
+Route::get('auth/facebook', [SocialAuthController::class, 'redirectToFacebook']);
+Route::get('auth/facebook/callback', [SocialAuthController::class, 'handleFacebookCallback']);
+Route::post('/send-email', [OrderController::class, 'sendEmail']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user/getuserID', [AuthController::class, 'userID']);
@@ -56,6 +66,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('feedback',feedbackController::class)->only('destroy','store','index');
     // tin tức
     Route::apiResource('news',NewsController::class)->only('index','show');
+
+    // gửi mail
+   
 // admin
     Route::middleware('check.admin')->group(function () {
         // người dùng
@@ -89,5 +102,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('productcolor/byproduct/{id}', [ProductColorController::class, 'getByProduct']); 
     Route::get('productversion', [ProductVersionController::class, 'index']); 
     Route::get('productcolor', [ProductColorController::class, 'index']); 
+
    
     

@@ -7,6 +7,11 @@ const Address = () => {
     const userId = localStorage.getItem('user_id');
     const [isFormVisible, setIsFormVisible] = useState(false);
     const [addresses, setAddresses] = useState([]);
+    const handleAddSuccess = () => {
+        fetchAddresses(); // Gọi API load lại địa chỉ
+        closeForm();      // Ẩn form
+    };
+
     const openForm = () => {
 
         setIsFormVisible(true);
@@ -91,7 +96,7 @@ const Address = () => {
                     {isFormVisible && (
                         <AddressForm
                             onClose={closeForm}
-                            onUpdate={fetchAddresses} // Gọi lại hàm fetchAddresses sau khi cập nhật
+                            onSuccess={handleAddSuccess}// Gọi lại hàm fetchAddresses sau khi cập nhật
                         />
                     )}
                 </>

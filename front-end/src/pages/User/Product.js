@@ -94,35 +94,48 @@ function Product() {
                         </div>
 
                     </div>
-                    <div className='col-md-10'>
+                    <div className='col-md-10 mt-2 mt-md-0'>
                         <div className='row'>
                             <div className='col-md-6 image-hover1'>
                                 <img style={{ width: '100%', height: '200px' }} src='https://bizweb.dktcdn.net/100/519/812/themes/954445/assets/banner_col_1.png?1741709416058' />
                             </div>
-                            <div className='col-md-6 image-hover1'>
+                            <div className='col-md-6 image-hover1 d-none d-md-block'>
                                 <img style={{ width: '100%', height: '200px' }} src='https://bizweb.dktcdn.net/100/519/812/themes/954445/assets/banner_col_2.png?1741709416058' />
                             </div>
                         </div>
                         <div className='mt-3 d-flex align-items-center'>
                             <p className='m-0'>Xếp theo:</p>
-                            <div className='arrange'>
-                                Tên A-Z
+                            <div className='d-md-flex align-items-center d-none'>
+                                <div className='arrange'>
+                                    Tên A-Z
+                                </div>
+                                <div className='arrange'>
+                                    Tên Z-A
+                                </div>
+                                <div className='arrange'>
+                                    Hàng mới
+                                </div>
+                                <div className='arrange'>
+                                    Giá thấp đến cao
+                                </div>
+                                <div className='arrange'>
+                                    Giá cao đến thấp
+                                </div>
                             </div>
-                            <div className='arrange'>
-                                Tên Z-A
-                            </div>
-                            <div className='arrange'>
-                                Hàng mới
-                            </div>
-                            <div className='arrange'>
-                                Giá thấp đến cao
-                            </div>
-                            <div className='arrange'>
-                                Giá cao đến thấp
-                            </div>
+                            <select className='d-block d-md-none'
+                                style={{ border: '1px solid #d71920', borderRadius: '5px', padding: '5px', marginLeft: '10px' }}
+                            >
+                                <option value="default">Mặc định</option>
+                                <option value="name_asc">Tên A-Z</option>
+                                <option value="name_desc">Tên Z-A</option>
+                                <option value="new">Hàng mới</option>
+                                <option value="price_asc">Giá thấp đến cao</option>
+                                <option value="price_desc">Giá cao đến thấp</option>
+                            </select>
+
 
                         </div>
-                        <div className='d-flex flex-wrap mt-3' style={{ rowGap: '20px' }}>
+                        <div className='d-flex likeproduct mt-3' >
                             {products.length > 0 ? (
                                 products.map((product) => (
                                     <ProductFrame

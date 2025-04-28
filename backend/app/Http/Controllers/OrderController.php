@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 
 use App\Http\Requests\OrderRequest;
+use App\Mail\PaymentConfirmation;
 use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class OrderController extends Controller
 {
@@ -167,5 +169,22 @@ class OrderController extends Controller
             "message" => "Đã cập nhật tổng tiền đơn hàng thành công",
             "data" => $order
         ]);
+    }
+    // mail
+    public function sendEmail(Request $request)
+    {
+        $paymentMethod = $request->paymentMethod;
+        $emailContent = $request->emailContent;
+        $userEmail = $request->userEmail; 
+
+        // Gửi email
+        try {
+            Mail::to($userEmail) // Địa chỉ email người nhận
+                ->send(new PaymentConfirmation($paymentMethod, $emailContent));
+
+            return response()->json(['message' => 'Email sent successfully'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to send email'], 500);
+        }
     }
 }

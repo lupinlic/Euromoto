@@ -3,6 +3,7 @@ import Crumb from '../../components/Crumb'
 import { Helmet } from "react-helmet-async";
 import ProductFrame from '../../components/ProductFrame';
 import favoriteProductApi from '../../api/favoriteProductApi';
+import '../../styles/product.css'
 
 function LikeProduct() {
     const userId = localStorage.getItem('user_id');
@@ -30,7 +31,7 @@ function LikeProduct() {
             <Crumb
                 name='Sản phẩm yêu thích' />
             <div className='container mt-5'>
-                <div className='ms-4 d-flex'>
+                <div className='likeproduct' >
                     {favoriteProducts.length > 0 ? (
                         favoriteProducts.map((product) => (
                             <ProductFrame
@@ -40,6 +41,7 @@ function LikeProduct() {
                                 price={product.ProductPrice}
                                 onUnfavorite={handleUnfavorite}
                             />
+
                         ))
                     ) : (
                         <p>Không có sản phẩm yêu thích nào.</p>

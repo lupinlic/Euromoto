@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
@@ -20,6 +21,13 @@ class AuthController extends Controller
         }
     
         $user = User::create($data);
+
+        Customer::create([
+            'UserID' => $user->id,
+            'FullName' => $user->name,
+            'PhoneNumber' => '', 
+            'Email' => $user->email, 
+        ]);
         
         return response()->json([
             "message" => "đã tạo tài khoản thành công",

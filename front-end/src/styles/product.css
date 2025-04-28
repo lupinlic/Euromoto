@@ -55,3 +55,48 @@
     border: none;
 
 }
+
+.half-circle div {
+    display: inline-block;
+    position: absolute;
+    right: 27%;
+    top: -15%;
+}
+
+.half-circle button {
+    border-radius: 20px;
+    padding: 8px;
+    background-color: #D71920;
+    color: #fff;
+    border: none;
+}
+
+.likeproduct {
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 20px;
+}
+
+@media (max-width: 480px) {
+    .likeproduct {
+        flex-wrap: nowrap;
+        width: 100%;
+        overflow-x: auto;
+        padding: 8px 0px;
+    }
+
+    .half-circle div {
+        display: inline-block;
+        position: absolute;
+        right: 17%;
+        top: -10%;
+    }
+
+    .half-circle button {
+        border-radius: 20px;
+        padding: 8px;
+        background-color: #D71920;
+        color: #fff;
+        border: none;
+    }
+}

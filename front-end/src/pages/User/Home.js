@@ -190,7 +190,7 @@ function Home() {
                     </div>
                     {/*  */}
                     <div className="row mt-5 ">
-                        <div className="col-md-6 image-hover1">
+                        <div className="col-md-6 image-hover1 d-none d-md-block">
                             <img className="w-100" src="https://bizweb.dktcdn.net/100/519/812/themes/954445/assets/banner_three_1.jpg?1741709416058" />
                         </div>
                         <div className="col-md-6 image-hover1">
@@ -203,13 +203,13 @@ function Home() {
                         titleDes='nổi bật'
                     ></Title>
                     <div className="row" style={{ height: '500px', borderRadius: '15px', width: '100%', background: '#f0efef' }}>
-                        <div className="col-md-6 p-0 image-hover1">
+                        <div className="col-md-6 p-0 d-none d-md-block image-hover1">
                             <img style={{ borderRadius: '15px', width: '100%', height: '500px' }} src="https://bizweb.dktcdn.net/100/519/812/themes/954445/assets/image_product_3.png?1741709416058" />
                         </div>
-                        <div className="col-md-6 mt-5">
+                        <div className="col-md-6 col-12 mt-5">
                             <div className=" row align-items-center justify-content-center">
                                 {products2.map((product) => (
-                                    <div className="col-md-6 d-flex align-items-center justify-content-end me-0">
+                                    <div className="col-md-6 col-6 d-flex align-items-center justify-content-end me-0">
 
                                         <ProductFrame
                                             id={product.ProductID}
@@ -249,7 +249,7 @@ function Home() {
                             ))}
                         </ul>
                     </div>
-                    <div className="d-flex flex-wrap mt-3 " style={{ rowGap: '20px' }}>
+                    <div className="d-flex flex-wrap mt-3 d-none d-md-flex" style={{ rowGap: '20px' }}>
                         <div className=" image-hover1" style={{ height: 'auto', marginRight: '20px' }}>
                             <img style={{ width: '486px', height: '336px' }} src="https://bizweb.dktcdn.net/100/519/812/files/dm12.png?v=1727830403260" />
                         </div>
@@ -263,8 +263,21 @@ function Home() {
                             />
                         ))}
                     </div>
+                    <div className="d-md-none d-block block-product-list">
+                        <div className='block-product-flash d-flex '>
+                            {productbycate.map((product) => (
+                                <ProductFrame
+                                    id={product.ProductID}
+                                    name={product.ProductName}
+                                    image={`http://127.0.0.1:8000/image/${product.category.parent.CategoryParentName}/${product.category.CategoryName}/${product.ProductName}/${product.thumbnail}`}
+                                    price={product.ProductPrice}
+                                />
+                            ))
+                            }
+                        </div>
+                    </div>
                     {/*  */}
-                    <div className="row mt-5">
+                    <div className="row mt-md-5 mt-1">
                         <div className="col-md-5">
                             <Title
                                 titleName='Dịch vụ'
@@ -302,7 +315,7 @@ function Home() {
                         </div>
                     </div>
                     {/*  */}
-                    <div className="image-hover1 mt-5" style={{ height: '402px' }}>
+                    <div className="image-hover1 mt-5 d-none d-md-block " style={{ height: '402px' }}>
                         <img className="w-100" src="https://bizweb.dktcdn.net/100/519/812/themes/954445/assets/banner_one.jpg?1741709416058" />
                     </div>
                     {/* thương hiệu */}
@@ -338,7 +351,7 @@ function Home() {
                     </div>
                 </div>
 
-                <div className="container-fluid evaluate mt-5 text-white">
+                <div className="container-fluid evaluate mt-5 text-white d-none d-md-block">
                     <div className="container h-100 d-flex flex-column align-items-center justify-content-center">
                         <p style={{ fontSize: '40px', fontWeight: '600', marginBottom: '20px' }}>Đánh giá khách hàng</p>
                         <div className="d-flex">
@@ -350,7 +363,6 @@ function Home() {
                                         <span>Khắc Đạt</span><br />
                                         <span>Khách hàng thành viên</span>
                                     </p>
-
                                 </div>
                             </div>
                             <div className="evaluate-frame">
@@ -361,7 +373,6 @@ function Home() {
                                         <span>Sở Bình</span><br />
                                         <span>Khách hàng thành viên</span>
                                     </p>
-
                                 </div>
                             </div>
                         </div>
@@ -391,7 +402,7 @@ function Home() {
                     </div>
                 </div>
                 {/*  */}
-                <div className="container evaluate2 mt-5">
+                <div className="container evaluate2 mt-5 d-none d-md-block">
                     <div className="row h-100">
                         <div className="col-md-3 d-flex flex-column align-items-center justify-content-center text-white text-center">
                             <img style={{ width: '60px' }} src="https://bizweb.dktcdn.net/100/519/812/themes/954445/assets/chinhsach_1.png?1741709416058" />
@@ -415,10 +426,8 @@ function Home() {
                             <img style={{ width: '60px' }} src="https://bizweb.dktcdn.net/100/519/812/themes/954445/assets/chinhsach_4.png?1741709416058" />
                             <h6>Ưu đãi thành viên</h6>
                             <p>Đăng ký thành viên để được nhận nhiều khuyến mãi</p>
-
                         </div>
                     </div>
-
                 </div>
             </div>
         </>

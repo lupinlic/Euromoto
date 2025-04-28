@@ -6,6 +6,7 @@ import AddressForm from '../../components/AddressForm';
 import Address from '../../components/Address';
 import authUser from '../../api/authUser';
 import customerApi from '../../api/customerApi';
+import addressApi from '../../api/addressApi';
 
 function Account() {
     const userId = localStorage.getItem('user_id');
@@ -22,6 +23,23 @@ function Account() {
     // hiện form địa chỉ
     const [isFormVisible, setIsFormVisible] = useState(false);
     const [selectedSection, setSelectedSection] = useState("info");
+    const [addresses, setAddresses] = useState([]);
+    const fetchAddresses = () => {
+        addressApi.getbyUser(userId)
+            .then(response => {
+                setAddresses(response.data);
+            })
+            .catch(error => {
+                console.error("Lỗi khi gọi API:", error);
+            });
+    };
+
+    // Khi thêm địa chỉ thành công
+    const handleAddressAdded = () => {
+        fetchAddresses(); // Load lại địa chỉ
+        closeForm();      // Đóng form
+    };
+
     const openForm = () => {
 
         setIsFormVisible(true);
@@ -176,7 +194,7 @@ function Account() {
                                             {isFormVisible && (
                                                 <AddressForm
                                                     onClose={closeForm}
-
+                                                    onSuccess={handleAddressAdded}
                                                 />
                                             )}
                                         </>

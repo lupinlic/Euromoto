@@ -1,5 +1,5 @@
 .footer {
-    margin-top: 50px;
+
     height: auto;
 }
 
@@ -40,6 +40,7 @@
 
 .mid-footer {
     background-color: #d71920;
-    height: 500px;
+    height: auto;
+    padding-bottom: 20px;
     background-image: url('https://bizweb.dktcdn.net/100/519/812/themes/954445/assets/bg-home.png?1741709392044');
 }

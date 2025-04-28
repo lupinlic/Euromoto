@@ -107,7 +107,7 @@ function Cart() {
                 <div className="row">
                     <div className="col-md-8">
                         <div style={{ border: '1px solid #cecccc' }}>
-                            <div className="row w-100 m-0 pt-2 pb-2">
+                            <div className="row w-100 m-0 pt-2 pb-2 d-none d-md-flex">
                                 <div className="col-md-6">
                                     <b>Thông tin sản phẩm</b>
                                 </div>
@@ -124,7 +124,7 @@ function Cart() {
                             {/* sản phẩm */}
                             {cart.map((cart, index) => (
                                 <div key={index} className="row w-100 m-0 align-items-center pt-2 pb-2" style={{ borderTop: '1px solid #cecccc' }}>
-                                    <div className="col-md-6 d-flex align-items-center">
+                                    <div className="col-md-6 d-flex align-items-center col-12">
                                         <input
                                             type="checkbox"
                                             checked={selectedItems.includes(cart.CartID)}
@@ -141,17 +141,17 @@ function Cart() {
                                             <p className="delete" onClick={() => handledelete(cart.CartID)}>Xóa</p>
                                         </div>
                                     </div>
-                                    <div className="col-md-2">
+                                    <div className="col-md-2 d-none d-md-block">
                                         <b style={{ color: '#ec3d40' }}>{Number(cart.product.ProductPrice).toLocaleString('vi-VN')} đ</b>
                                     </div>
-                                    <div className="col-md-2">
+                                    <div className="col-md-2 col-6">
                                         <div className='input-number-product m-0'>
                                             <button onClick={() => handleDecrease(cart.CartID, cart.Quantity)}>-</button>
                                             <input type='number' readOnly value={cart.Quantity} />
                                             <button onClick={() => handleIncrease(cart.CartID, cart.Quantity)}>+</button>
                                         </div>
                                     </div>
-                                    <div className="col-md-2">
+                                    <div className="col-md-2 col-6">
                                         <b style={{ color: '#ec3d40' }}>{Number(cart.product.ProductPrice * cart.Quantity).toLocaleString('vi-VN')} đ</b>
                                     </div>
                                 </div>
@@ -178,7 +178,7 @@ function Cart() {
 
                         </div>
                     </div>
-                    <div className="col-md-4">
+                    <div className="col-md-4 d-none d-md-block">
                         <h6>Chọn thời gian giao hàng</h6>
                         <div className="row">
                             <div className="col-md-6">

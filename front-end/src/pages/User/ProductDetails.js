@@ -186,7 +186,7 @@ function ProductDetails() {
                         <div className='row mt-3'>
                             {color.map((img, index) => (
 
-                                <div className='col-md-3'>
+                                <div className='col-md-3 col-3 mt-1'>
 
                                     <div key={index} className='d-flex align-items-center' style={{ border: selectedImage === buildImageUrl(img) ? "2px solid #D71920" : "2px solid #d8d7d7", height: '113px', borderRadius: '5px', cursor: 'pointer' }}>
                                         <img src={buildImageUrl(img)}
@@ -312,7 +312,7 @@ function ProductDetails() {
                         </div>
                     </div>
                 </div>
-                <div className='mt-5'>
+                <div className='mt-5 d-none d-md-block'>
                     <div className='col-md-9'>
                         <div className='product-tab'>
                             <div className='title-tab'>
@@ -354,24 +354,26 @@ function ProductDetails() {
                     </div>
                 </div>
                 {/*  */}
-                <Title
-                    titleName='Sản phẩm'
-                    titleDes='liên quan'
-                ></Title>
-                <div className='ms-4 d-flex'>
-                    {limitedProducts.length > 0 ? (
-                        limitedProducts.map((product) => (
-                            <ProductFrame
-                                id={product.ProductID}
-                                name={product.ProductName}
-                                image={`http://127.0.0.1:8000/image/${product.category.parent.CategoryParentName}/${product.category.CategoryName}/${product.ProductName}/${product.thumbnail}`}
-                                price={product.ProductPrice}
-                            />
-                        ))
-                    ) : (
-                        <p>Không có sản phẩm nào.</p>
-                    )}
+                <div className='d-none d-md-block'>
+                    <Title
+                        titleName='Sản phẩm'
+                        titleDes='liên quan'
+                    ></Title>
+                    <div className='ms-4 d-flex'>
+                        {limitedProducts.length > 0 ? (
+                            limitedProducts.map((product) => (
+                                <ProductFrame
+                                    id={product.ProductID}
+                                    name={product.ProductName}
+                                    image={`http://127.0.0.1:8000/image/${product.category.parent.CategoryParentName}/${product.category.CategoryName}/${product.ProductName}/${product.thumbnail}`}
+                                    price={product.ProductPrice}
+                                />
+                            ))
+                        ) : (
+                            <p>Không có sản phẩm nào.</p>
+                        )}
 
+                    </div>
                 </div>
             </div>
 

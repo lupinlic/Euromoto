@@ -57,8 +57,8 @@ const ProductFrame = ({ image, name, price, id, onUnfavorite }) => {
                 <div className='product-thumnail'>
                     <img className='' style={{ width: '100%', height: '155px' }} src={image} alt={name} />
                     <div className="half-circle">
-                        <div style={{ display: 'inline-block', position: 'absolute', right: '27%', top: '-15%' }}>
-                            <button onClick={handleToProductDetails} style={{ borderRadius: '20px', padding: '8px', background: '#D71920', color: '#fff', border: 'none' }}>Xem chi tiết</button>
+                        <div>
+                            <button onClick={handleToProductDetails} >Xem chi tiết</button>
                         </div>
                     </div>
                 </div>

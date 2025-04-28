@@ -15,6 +15,7 @@ class AddressController extends Controller
     public function index()
     {
         //
+        
         $address = Address::all();
         
         return response()->json([
@@ -37,7 +38,28 @@ class AddressController extends Controller
     public function store(Request $request)
     {
         //
-        $address = Address::create($request->all());
+        $userId = $request->UserID;
+        $addressCount = Address::where('UserID', $userId)->count();
+        $address = new Address();
+    $address->UserID = $userId;
+    $address->FullName = $request->FullName;
+    $address->PhoneNumber = $request->PhoneNumber;
+    $address->Email = $request->Email;
+
+    $address->Provinces = $request->Provinces;
+    $address->Districts = $request->Districts;
+    $address->Wards = $request->Wards;
+    $address->SpecificAddress = $request->SpecificAddress;
+    // Nếu chưa có địa chỉ nào thì mặc định là type = 1
+    $address->isDefault = ($addressCount == 0) ? 1 : 0;
+
+    $address->save();
+
+    if ($addressCount == 0) {
+        Customer::where('UserID', $userId)->update([
+            'PhoneNumber' => $request->PhoneNumber,
+        ]);
+    }
         return response()->json([
             "message" => "đã tạo danh mục thành công",
             "data" => $address,

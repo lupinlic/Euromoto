@@ -27,7 +27,7 @@ function Footer() {
             <div className='mid-footer text-white pt-5'>
                 <div className='container '>
                     <div className='row'>
-                        <div className='col-md-4'>
+                        <div className='col-md-4 col-12'>
                             <img style={{ width: '200px', height: '80px' }} src='https://bizweb.dktcdn.net/100/519/812/themes/954445/assets/logo-ft.png?1741709416058' />
                             <p className='mt-3'>Chào mừng quý khách đến với Dola Moto – điểm đến đáng tin cậy cho những người yêu thích xe máy tại khu vực!
                                 Chúng tôi chuyên cung cấp các dòng xe máy chất lượng từ những thương hiệu hàng đầu như Honda, Yamaha và SYM,
@@ -37,7 +37,7 @@ function Footer() {
                             <h6>Email: support@sapo.vn</h6>
 
                         </div>
-                        <div className='col-md-2'>
+                        <div className='col-md-2 col-12'>
                             <h5>Hướng dẫn</h5>
                             <p>Hướng dẫn mua hàng</p>
                             <p>Hướng dẫn giao nhận</p>
@@ -45,7 +45,7 @@ function Footer() {
                             <p>Điều khoản dịch vụ</p>
                             <p>Câu hỏi thường gặp</p>
                         </div>
-                        <div className='col-md-2'>
+                        <div className='col-md-2 col-12'>
                             <h5>Chính sách</h5>
                             <p>Chính sách thành viên</p>
                             <p>Chính sách thanh toán</p>
@@ -53,14 +53,12 @@ function Footer() {
                             <p>Bảo mật thông tin cá nhân</p>
 
                         </div>
-                        <div className='col-md-4'>
+                        <div className='col-md-4 col-12'>
                             <h5>Nhận tin khuyến mãi</h5>
                             <div className='d-flex mt-3'>
                                 <input style={{ width: '300px', height: '40px', outline: 'none', border: 'none' }} placeholder='Nhập email nhận tin khuyến mãi' />
                                 <button style={{ width: '100px', height: '40px', background: '#FFB42E', border: 'none', color: '#fff' }}>ĐĂNG KÝ</button>
-
                             </div>
-
                         </div>
                     </div>
                 </div>
