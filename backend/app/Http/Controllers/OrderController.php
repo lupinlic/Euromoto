@@ -6,8 +6,12 @@ namespace App\Http\Controllers;
 use App\Http\Requests\OrderRequest;
 use App\Mail\PaymentConfirmation;
 use App\Models\Order;
+use App\Models\OrderDetail;
+use App\Models\OrderItem;
+use App\Models\Payment;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
 class OrderController extends Controller
@@ -18,7 +22,7 @@ class OrderController extends Controller
     public function index()
     {
         //
-        $orders = Order::with('customer')->get();
+        $orders = Order::with('customer','address')->get();
         
         return response()->json([
             "message" => "đã hiển thị đơn hàng thành công",
@@ -44,9 +48,12 @@ class OrderController extends Controller
             'CustomerID' => $request->CustomerID,
             'AddressID' => $request->AddressID,
             'OrderDate' => $request->OrderDate,
-            'status' => 'Chờ xác nhận',
+            'status' => 'pending',
             'TotalPrice' => $request->TotalPrice, // sẽ cập nhật sau
-            'PaymentMethod' => $request->PaymentMethod,
+        ]);
+        $order->payment()->create([
+            'Method' => $request->Method,
+            'Status' => 'pending',
         ]);
         
         $totalPrice = 0;
@@ -74,28 +81,22 @@ class OrderController extends Controller
         'data' => $order->load('items')
     ]);
     }
-    public function updateStatus(Request $request, Order $order)
-    {
-        $request->validate([
-            'OrderStatus' => 'required|in:Chờ xác nhận,Đang vận chuyển,Đã giao,Đã hủy'
-        ]);
-
-        $order->update([
-            'OrderStatus' => $request->OrderStatus
-        ]);
-
-        return response()->json([
-            'message' => 'Cập nhật trạng thái thành công',
-            'data' => $order
-        ]);
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show($OrderID)
     {
         //
+        $order = Order::find($OrderID); // Tìm theo CategoryID
+
+        if (!$order) {
+            return response()->json([
+                "message" => "Không tìm thấy danh mục",
+                "data" => null
+            ], 404);
+        }
+    
+        return response()->json([
+            "message" => "Hiển thị danh mục thành công",
+            "data" => $order,
+        ]);
     }
 
     /**
@@ -170,7 +171,7 @@ class OrderController extends Controller
             "data" => $order
         ]);
     }
-    // mail
+// mail
     public function sendEmail(Request $request)
     {
         $paymentMethod = $request->paymentMethod;
@@ -187,4 +188,106 @@ class OrderController extends Controller
             return response()->json(['error' => 'Failed to send email'], 500);
         }
     }
+
+
+// thống kê
+public function getAdvancedStatistics(Request $request)
+{
+    $type = $request->query('type', 'day'); // day | month | quarter | year
+    $from = $request->query('from_date');
+    $to = $request->query('to_date');
+
+    $orders = Order::query();
+
+    // Lọc theo khoảng thời gian
+    if ($from && $to) {
+        $orders->whereBetween('OrderDate', [$from, $to]);
+    }
+
+    $allOrders = clone $orders;
+    $completedOrders = clone $orders;
+
+    $totalOrders = $allOrders->count();
+    $completed = $completedOrders->where('status', 'completed')->get();
+    $completedCount = $completed->count();
+    $revenue = $completed->sum('TotalPrice');
+
+    // === Thống kê doanh thu theo thời gian ===
+    $groupByFormat = match ($type) {
+        'day' => '%Y-%m-%d',
+        'month' => '%Y-%m',
+        'quarter' => 'QUARTER(OrderDate)',
+        'year' => '%Y',
+        default => '%Y-%m-%d',
+    };
+
+    if ($type === 'quarter') {
+        $chartData = Order::selectRaw("QUARTER(OrderDate) as time, SUM(TotalPrice) as total")
+            ->where('status', 'completed')
+            ->when($from && $to, fn ($q) => $q->whereBetween('OrderDate', [$from, $to]))
+            ->groupBy('time')
+            ->orderBy('time')
+            ->get()
+            ->map(fn ($item) => ['label' => 'Quý ' . $item->time, 'total' => $item->total]);
+    } else {
+        $chartData = Order::selectRaw("DATE_FORMAT(OrderDate, '$groupByFormat') as time, SUM(TotalPrice) as total")
+            ->where('status', 'completed')
+            ->when($from && $to, fn ($q) => $q->whereBetween('OrderDate', [$from, $to]))
+            ->groupBy('time')
+            ->orderBy('time')
+            ->get()
+            ->map(fn ($item) => ['label' => $item->time, 'total' => $item->total]);
+    }
+
+    // === Top 5 sản phẩm bán chạy ===
+    $topProducts = OrderItem::select('ProductID', DB::raw('SUM(Quantity) as total_quantity'))
+        ->join('orders', 'orders.OrderID', '=', 'order_item.OrderID')
+        ->where('orders.status', 'completed')
+        ->when($from && $to, fn ($q) => $q->whereBetween('orders.OrderDate', [$from, $to]))
+        ->groupBy('ProductID')
+        ->orderByDesc('total_quantity')
+        ->limit(5)
+        ->with('product') // cần có quan hệ product trong OrderItem
+        ->get()
+        ->map(fn ($item) => [
+            'name' => $item->product->ProductName ?? 'SP ' . $item->ProductID,
+            'quantity' => $item->total_quantity
+        ]);
+
+    return response()->json([
+        'total_orders' => $totalOrders,
+        'completed_orders' => $completedCount,
+        'revenue' => $revenue,
+        'chart' => [
+            'labels' => $chartData->pluck('label'),
+            'data' => $chartData->pluck('total'),
+        ],
+        'top_products' => $topProducts,
+    ]);
+}
+
+
+
+// trạng thái đơn hàng
+public function updateStatus(Request $request, $id)
+{
+    $order = Order::findOrFail($id);
+
+    $nextStatus = $request->input('status');
+
+    // Kiểm tra logic nếu cần (ví dụ: không cho nhảy cóc trạng thái)
+    $allowedTransitions = [
+        'pending' => 'processing',
+        'processing' => 'completed',
+    ];
+
+    if (!isset($allowedTransitions[$order->status]) || $allowedTransitions[$order->status] !== $nextStatus) {
+        return response()->json(['message' => 'Chuyển trạng thái không hợp lệ'], 400);
+    }
+
+    $order->status = $nextStatus;
+    $order->save();
+
+    return response()->json(['message' => 'Đã cập nhật trạng thái thành công', 'order' => $order]);
+}
 }

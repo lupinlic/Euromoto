@@ -13,7 +13,7 @@ class CategoryController extends Controller
     public function index()
     {
         //
-        $category = Category::all();
+        $category = Category::with('parent')->get();
         
         return response()->json([
             "message" => "đã lấy danh mục thành công",
@@ -64,7 +64,9 @@ class CategoryController extends Controller
     public function show(Category $Categorys,$CategoryID)
     {
         //
-        $Category = Category::find($CategoryID); // Tìm theo CategoryID
+        $Category = Category::with('parent')
+        ->where('CategoryID',$CategoryID)
+        ->get(); // Tìm theo CategoryID
 
         if (!$Category) {
             return response()->json([

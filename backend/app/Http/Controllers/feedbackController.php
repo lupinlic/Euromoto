@@ -11,7 +11,7 @@ class feedbackController extends Controller
     public function index()
     {
         //
-        $feedback = feedback::all();
+        $feedback = feedback::with('customer')->get();
         
         return response()->json([
             "message" => "đã lấy danh mục thành công",

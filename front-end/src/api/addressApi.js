@@ -4,8 +4,11 @@ const addressApi = {
     getAdress() {
         return axiosClient.get('/address');
     },
-    updateAdress(id) {
-        return axiosClient.put(`/address/${id}`);
+    getAdressById(id) {
+        return axiosClient.get(`/address/${id}`);
+    },
+    updateAdress(id, data) {
+        return axiosClient.put(`/address/${id}`, data);
     },
     addAdress(data) {
         return axiosClient.post('/address', data);

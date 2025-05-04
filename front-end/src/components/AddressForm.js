@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import addressApi from '../api/addressApi';
 
-const AddressForm = ({ onClose, onSuccess }) => {
+const AddressForm = ({ id, onClose, onSuccess }) => {
     const userId = localStorage.getItem('user_id');
     const [fullName, setFullName] = useState("");
     const [email, setEmail] = useState("");
@@ -78,25 +78,69 @@ const AddressForm = ({ onClose, onSuccess }) => {
         setSelectedCommune(communeName.name);
     }
 
-    const data = {
-        UserID: userId,
-        FullName: fullName,
-        Email: email,
-        PhoneNumber: phone,
-        SpecificAddress: specificAddress,
-        Provinces: selectedProvince,
-        Districts: selectedDistrict,
-        isDefault: 0,
-        Wards: selectedCommune
-    }
-    console.log(data)
-    function handleaddAdress() {
-        addressApi.addAdress(data)
-            .then(() => {
-                console.log("Thêm địa chỉ thành công");
-                onSuccess();
-                onClose();
-            })
+    useEffect(() => {
+        if (id) {
+            addressApi.getAdressById(id)
+                .then((response) => {
+                    const data = response.data;
+                    setFullName(data.FullName);
+                    setEmail(data.Email);
+                    setPhone(data.PhoneNumber);
+                    setSpecificAddress(data.SpecificAddress);
+                    setSelectedProvince(data.Provinces);
+                    setSelectedDistrict(data.Districts);
+                    setSelectedCommune(data.Wards);
+                    console.log(data)
+                })
+                .catch((error) => {
+                    console.error('Có lỗi khi lấy thông tin tài khoản:', error);
+                });
+        } else {
+            // reset khi không phải edit
+            setFullName('');
+            setEmail('');
+            setPhone('');
+            setSpecificAddress('');
+        }
+    }, [userId]);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const data = {
+            UserID: userId,
+            FullName: fullName,
+            Email: email,
+            PhoneNumber: phone,
+            SpecificAddress: specificAddress,
+            Provinces: selectedProvince,
+            Districts: selectedDistrict,
+            isDefault: 0,
+            Wards: selectedCommune
+        }
+        console.log(data)
+        try {
+            if (id) {
+                addressApi.updateAdress(id, data)
+                    .then(() => {
+                        console.log("Cập nhật địa chỉ thành công");
+                    })
+                    .catch((error) => {
+                        console.error('Có lỗi khi cập nhật địa chỉ:', error);
+                    });
+            } else {
+
+                addressApi.addAdress(data)
+                    .then(() => {
+                        console.log("Thêm địa chỉ thành công");
+                    })
+            }
+            onSuccess();
+            onClose();
+        } catch (err) {
+            console.error(err);
+            alert('Có lỗi xảy ra khi lưu .');
+        }
+
     }
     return (
         <>
@@ -108,8 +152,8 @@ const AddressForm = ({ onClose, onSuccess }) => {
                 <input type='text' placeholder='Địa chỉ' value={specificAddress} onChange={(e) => setSpecificAddress(e.target.value)} />
                 <div className="row mt-4">
                     <div className="col-md-4">
-                        <select value={selectedProvince} onChange={handleProvinceChange}>
-                            <option value="">Chọn Tỉnh</option>
+                        <select value={provinces.code} onChange={handleProvinceChange}>
+                            <option>{selectedProvince || "Chọn tỉnh"}</option>
                             {provinces.map((p) => (
                                 <option key={p.code} value={p.code}>
                                     {p.name}
@@ -119,8 +163,8 @@ const AddressForm = ({ onClose, onSuccess }) => {
 
                     </div>
                     <div className="col-md-4">
-                        <select value={selectedDistrict} onChange={handleDistrictChange} disabled={!selectedProvince}>
-                            <option value="">Chọn Huyện</option>
+                        <select value={districts.code} onChange={handleDistrictChange} disabled={!selectedProvince}>
+                            <option value="">{selectedDistrict || "Chọn huyện"}</option>
                             {districts.map((d) => (
                                 <option key={d.code} value={d.code}>
                                     {d.name}
@@ -130,8 +174,8 @@ const AddressForm = ({ onClose, onSuccess }) => {
 
                     </div>
                     <div className="col-md-4">
-                        <select disabled={!selectedDistrict} value={selectedCommune} onChange={handleCommuneChange}>
-                            <option value="">Chọn Xã</option>
+                        <select disabled={!selectedDistrict} value={communes.code} onChange={handleCommuneChange}>
+                            <option value="">{selectedCommune || "Chọn xã"}</option>
                             {communes.map((w) => (
                                 <option key={w.code} value={w.code}>
                                     {w.name}
@@ -143,7 +187,7 @@ const AddressForm = ({ onClose, onSuccess }) => {
 
                 </div>
                 <div className="mt-4 float-end">
-                    <button type="submit" className="btn btn-primary" onClick={handleaddAdress}>Lưu</button>
+                    <button type="submit" className="btn btn-primary" onClick={handleSubmit}>Lưu</button>
                     <button type="button" className="ms-3 btn btn-secondary" onClick={onClose}>Đóng</button>
                 </div>
             </div>

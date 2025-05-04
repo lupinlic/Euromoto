@@ -49,7 +49,7 @@ class ProductController extends Controller
         'ProductName'   => $request->ProductName,
         'CategoryID'    => $request->CategoryID,
         'ProductPrice'  => $request->ProductPrice,
-        'thumbnail'     => $thumbnailPath, // đường dẫn đã xử lý
+        'thumbnail'     => $file_name, // đường dẫn đã xử lý
     ]);
     
     return response()->json(['message' => 'Product created successfully', 'data' => $product], 201);

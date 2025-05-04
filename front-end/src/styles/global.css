@@ -351,6 +351,12 @@ body {
     color: #000;
 }
 
+.slidechild {}
+
+.activechild {
+    color: black !important;
+}
+
 .form-popup111 {
     position: fixed;
     top: 50%;
@@ -362,7 +368,7 @@ body {
     border: 1px solid #888;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     width: 400px;
-    height: 500px;
+    height: auto;
 }
 
 .form-container {
@@ -378,6 +384,14 @@ body {
     border-radius: 4px;
 }
 
+.form-container select {
+    margin: 10px 0;
+    padding: 10px;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
 .btn {
     margin: 5px;
 }
@@ -385,7 +399,7 @@ body {
 .form-bt {
     position: relative;
     right: -60%;
-    bottom: -90px;
+    bottom: -10px;
 }
 
 /* Overlay to blur background */
@@ -429,4 +443,14 @@ body {
     to {
         transform: rotate(360deg);
     }
+}
+
+/* mắt */
+.eye:hover {
+    cursor: pointer;
+    color: #ffb42e;
+}
+
+.eye {
+    margin-top: 12px;
 }

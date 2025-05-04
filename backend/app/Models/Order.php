@@ -13,13 +13,17 @@ class Order extends Model
     protected $primaryKey = 'OrderID';
     public $timestamps = false;
 
-    protected $fillable = ['CustomerID', 'TotalPrice','OrderDate', 'status','AddressID','PaymentMethod'];
+    protected $fillable = ['CustomerID', 'TotalPrice','OrderDate', 'status','AddressID'];
 
     public function customer()
     {
         return $this->belongsTo(Customer::class, 'CustomerID', 'CustomerID');
     }
 
+    public function payment()
+    {
+        return $this->hasOne(Payment::class, 'OrderID', 'OrderID');
+    }
     public function items()
     {
         return $this->hasMany(OrderItem::class, 'OrderID', 'OrderID');

@@ -19,7 +19,15 @@ import News from "../pages/User/News";
 import NewDetails from "../pages/User/NewsDetails";
 // admin
 import Accounts from "../pages/Admin/Accounts/Account";
-import Category from "../pages/Admin/Category/Category";
+import CarCompany from "../pages/Admin/CarCompany/CarCompany";
+import VehicleType from "../pages/Admin/VehicleType/VehicleType";
+import ProductAd from "../pages/Admin/Product/Product";
+import ProductColor from "../pages/Admin/ProductColor/ProductColor";
+import ProductVersion from "../pages/Admin/ProductVersion/ProductVersion";
+import Customer from "../pages/Admin/Customer/Customer";
+import Order from "../pages/Admin/Order/Order";
+import Feedback from "../pages/Admin/Feedback/Feedback";
+import NewsAd from "../pages/Admin/News/News";
 
 const publicRoutes = [
     {
@@ -80,8 +88,35 @@ const publicRoutes = [
         path: '/Admin/Accounts', component: Accounts, layout: Admin
     },
     {
-        path: '/Admin/Category', component: Category, layout: Admin
+        path: '/Admin/CarCompany', component: CarCompany, layout: Admin
     },
+    {
+        path: '/Admin/VehicleType', component: VehicleType, layout: Admin
+    },
+    {
+        path: '/Admin/Product', component: ProductAd, layout: Admin
+    },
+    {
+        path: '/Admin/ProductColor', component: ProductColor, layout: Admin
+    },
+    {
+        path: '/Admin/ProductVersion', component: ProductVersion, layout: Admin
+    },
+    {
+        path: '/Admin/Customer', component: Customer, layout: Admin
+    },
+    {
+        path: '/Admin/Order', component: Order, layout: Admin
+    },
+    {
+        path: '/Admin/Feedback', component: Feedback, layout: Admin
+    },
+    {
+        path: '/Admin/News', component: NewsAd, layout: Admin
+    }
+
+
+
 
 
 ];

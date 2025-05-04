@@ -10,6 +10,7 @@ use App\Http\Controllers\FavoriteProductController;
 use App\Http\Controllers\feedbackController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\OrderItemController;
 use App\Http\Controllers\ProductColorController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductVersionController;
@@ -60,8 +61,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('cart/updatequantity', [CartController::class, 'updateQuantity']);
     // đơn hàng
     Route::post('/order/place', [OrderController::class, 'store']);
-    Route::get('order', [OrderController::class, 'index']);
     Route::get('customer/getorder/{id}', [CustomerController::class, 'getOrderOfCustomer']);
+    Route::get('orderItem/{id}', [OrderItemController::class, 'show']);
     // feedback
     Route::apiResource('feedback',feedbackController::class)->only('destroy','store','index');
     // tin tức
@@ -72,6 +73,7 @@ Route::middleware('auth:sanctum')->group(function () {
 // admin
     Route::middleware('check.admin')->group(function () {
         // người dùng
+        Route::post('user', [UserController::class, 'store']);
         Route::get('user', [UserController::class, 'index']);
         Route::delete('user/{id}', [UserController::class, 'destroy']);
         // sản phẩm
@@ -88,11 +90,21 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('productcolor',ProductColorController::class)->only('destroy','update','store','show');
         // tin tức
         Route::apiResource('news',NewsController::class)->only('destroy','update','store');
+        // khách hàng
+        Route::get('customer', [CustomerController::class, 'index']);
+        // đơn hnagf
+        Route::get('order', [OrderController::class, 'index']);
+        Route::get('order/{id}', [OrderController::class, 'show']);
+     
+        // thống kê
+        Route::get('/statistics', [OrderController::class, 'getAdvancedStatistics']);
+        // trạng thái đơn hàng
+        Route::put('/orders/{id}/update-status', [OrderController::class, 'updateStatus']);
     });
 });
 // công khai
     Route::get('category_parent', [CategoryParentController::class, 'index']); 
-    Route::get('category', [CategoryParentController::class, 'index']); 
+    Route::get('category', [CategoryController::class, 'index']); 
     Route::get('category/{CategoryParentID}/category', [CategoryController::class, 'getByCategoryParent']);
     Route::get('products', [ProductController::class, 'index']); 
     Route::get('products/{id}', [ProductController::class, 'show']); 
@@ -102,6 +114,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('productcolor/byproduct/{id}', [ProductColorController::class, 'getByProduct']); 
     Route::get('productversion', [ProductVersionController::class, 'index']); 
     Route::get('productcolor', [ProductColorController::class, 'index']); 
+ 
 
    
     

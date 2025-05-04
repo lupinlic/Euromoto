@@ -5,8 +5,9 @@ import authUser from '../../../api/authUser';
 function Account() {
     const [isFormVisible, setIsFormVisible] = useState(false);
     const [user, setUser] = useState(null);
-    const openForm = () => {
-        // setSelectedUserId(userId);
+    const [selectedUserId, setSelectedUserId] = useState(null);
+    const openForm = (userId = null) => {
+        setSelectedUserId(userId);
         setIsFormVisible(true);
     };
 
@@ -20,10 +21,19 @@ function Account() {
         try {
             const response = await authUser.get_all();
             setUser(response.data);
+            console.log(response.data);
         } catch (error) {
             console.error('Có lỗi khi lấy danh sách tài khoản:', error);
         }
     };
+    const deleteUser = async (id) => {
+        try {
+            await authUser.delete_user(id);
+            getAllUser();
+        } catch (error) {
+            console.error('Có lỗi khi xóa tài khoản:', error);
+        }
+    }
     useEffect(() => {
         getAllUser();
     }, []);
@@ -36,6 +46,8 @@ function Account() {
                         <>
                             <div className="overLay"></div> {/* Lớp overlay */}
                             <AccountForm
+                                userId={selectedUserId}
+                                onUpdate={getAllUser}
                                 onClose={closeForm} /> {/* Form */}
                         </>
                     )}
@@ -45,36 +57,38 @@ function Account() {
                     <table className="table table-striped">
                         <thead>
                             <tr>
+                                <th>STT</th>
                                 <th>Username</th>
-                                <th>Password</th>
                                 <th>Email</th>
-                                <th>SĐT</th>
+                                <th>Role</th>
                                 <th>Hành động</th>
                             </tr>
                         </thead>
                         <tbody>
+                            {user?.map((item, index) => (
+                                <tr key={index}>
+                                    <td>{index}</td>
+                                    <td>{item.name}</td>
+                                    <td>{item.email}</td>
+                                    <td>{item.role}</td>
+                                    <td>
+                                        <button
+                                            className="btn btn-warning btn-sm mr-2"
+                                            onClick={() => openForm(item.id)}
 
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td>
-                                    <button
-                                        className="btn btn-warning btn-sm mr-2"
-                                        onClick={() => openForm()}
-                                    >
-                                        Sửa
-                                    </button>
-                                    <button
-                                        style={{ marginLeft: '8px' }}
-                                        className="btn btn-danger btn-sm"
-                                    // onClick={() => deleteUser(item.user_id)}
-                                    >
-                                        Xóa
-                                    </button>
-                                </td>
-                            </tr>
+                                        >
+                                            Sửa
+                                        </button>
+                                        <button
+                                            style={{ marginLeft: '8px' }}
+                                            className="btn btn-danger btn-sm"
+                                            onClick={() => deleteUser(item.id)}
+                                        >
+                                            Xóa
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
 
                         </tbody>
                     </table>

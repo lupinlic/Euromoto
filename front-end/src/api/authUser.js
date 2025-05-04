@@ -31,6 +31,9 @@ const authUser = {
   },
   update_user(id, data) {
     return axiosClient.put(`/user/${id}`, data);
+  },
+  add_user(data) {
+    return axiosClient.post('/user', data);
   }
 
 

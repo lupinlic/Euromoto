@@ -7,9 +7,21 @@ import Address from '../../components/Address';
 import authUser from '../../api/authUser';
 import customerApi from '../../api/customerApi';
 import addressApi from '../../api/addressApi';
+import OrderDetails from '../Admin/Order/OrderDetails';
 
 function Account() {
     const userId = localStorage.getItem('user_id');
+    const [isFormVisible1, setIsFormVisible1] = useState(false);
+    const [selectedOrderId, setSelectedOrderId] = useState(null);
+    const openForm1 = (id = null) => {
+        setSelectedOrderId(id);
+        setIsFormVisible1(true);
+    };
+
+    // Đóng form
+    const closeForm1 = () => {
+        setIsFormVisible1(false);
+    };
 
     // tài khoản
     const [name, setName] = useState();
@@ -32,12 +44,6 @@ function Account() {
             .catch(error => {
                 console.error("Lỗi khi gọi API:", error);
             });
-    };
-
-    // Khi thêm địa chỉ thành công
-    const handleAddressAdded = () => {
-        fetchAddresses(); // Load lại địa chỉ
-        closeForm();      // Đóng form
     };
 
     const openForm = () => {
@@ -99,6 +105,17 @@ function Account() {
             </Helmet>
             <Crumb
                 name='Tài khoản' />
+            {isFormVisible1 && (
+                <>
+                    <div className="overLay"></div> {/* Lớp overlay */}
+                    <OrderDetails
+                        id={selectedOrderId}
+                        onClose={closeForm1}
+                    // Truyền hàm fetchOrder vào props
+                    />
+
+                </>
+            )}
             <div className='container mt-5 accountpage'>
                 <div className='row'>
                     <div className='col-md-3 '>
@@ -130,7 +147,7 @@ function Account() {
                                 className={selectedSection === "addresses" ? "active" : ""}
                                 onClick={() => setSelectedSection("addresses")}
                             >
-                                Số địa chỉ (0)
+                                Số địa chỉ
                             </li>
                         </ul>
                     </div>
@@ -150,12 +167,14 @@ function Account() {
                                     <table bordered className="mt-3 w-100 orders-table">
                                         <thead>
                                             <tr className="text-white text-center" style={{ backgroundColor: "#FFA726" }}>
-                                                <th>Đơn hàng</th>
+                                                <th>Mã đơn hàng</th>
                                                 <th>Ngày</th>
                                                 <th>Địa chỉ</th>
                                                 <th>Giá trị đơn hàng</th>
-                                                <th>TT thanh toán</th>
-                                                <th>TT vận chuyển</th>
+                                                <th>PTTT</th>
+                                                <th>TTTT</th>
+                                                <th>TTĐH</th>
+                                                <th></th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -170,8 +189,10 @@ function Account() {
                                                         <td>{order.OrderDate}</td>
                                                         <td>{order.AddressID}</td>
                                                         <td>{Number(order.TotalPrice).toLocaleString('vi-VN')} VNĐ</td>
-                                                        <td>{order.PaymentMethod}</td>
+                                                        <td>{order.payment.Method}</td>
+                                                        <td>{order.payment.Status}</td>
                                                         <td>{order.status}</td>
+                                                        <td><i onClick={() => openForm1(order.OrderID)} class="fa-solid fa-eye eye"></i></td>
                                                     </tr>
                                                 ))
                                             )}
@@ -187,18 +208,6 @@ function Account() {
                             {selectedSection === "addresses" && (
                                 <div>
                                     <p> ĐỊA CHỈ CỦA BẠN</p>
-                                    <button className='btadd mt-2' onClick={() => openForm()}>Thêm địa chỉ</button>
-                                    {isFormVisible && (
-                                        <>
-                                            <div className="overlay"></div> {/* Lớp overlay */}
-                                            {isFormVisible && (
-                                                <AddressForm
-                                                    onClose={closeForm}
-                                                    onSuccess={handleAddressAdded}
-                                                />
-                                            )}
-                                        </>
-                                    )}
                                     <Address />
                                 </div>
                             )}

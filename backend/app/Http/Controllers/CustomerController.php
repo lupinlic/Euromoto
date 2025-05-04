@@ -129,7 +129,7 @@ class CustomerController extends Controller
         ], 404);
     }
 
-    $orders = $Customer->orders()->get();
+    $orders = $Customer->orders()->with('payment','items')->get();
 
     if ($orders->isNotEmpty()) {
         return response()->json([

@@ -57,7 +57,7 @@ function Checkout() {
     const payload = {
         CustomerID: customer.CustomerID,
         AddressID: addresses.AddressID,
-        PaymentMethod: selectedPayment,
+        Method: selectedPayment,
         TotalPrice: total,
         OrderDate: dayjs().format("YYYY-MM-DD HH:mm:ss"),
         items: selectedProducts.map((item) => ({

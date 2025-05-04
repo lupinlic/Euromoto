@@ -12,15 +12,17 @@ class ProductColorController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        //
-        $color = ProductColor::all();
-        return response()->json([
-            "message" => "đã tạo danh mục thành công",
-            "data" => $color,
-        ]);
-    }
+    public function index(Request $request)
+{
+    $perPage = $request->get('per_page', 10); // số item mỗi trang, mặc định 10
+
+    $color = ProductColor::with('product.category.parent')->paginate($perPage);
+
+    return response()->json([
+        "message" => "Lấy danh sách thành công",
+        "data" => $color,
+    ]);
+}
 
     /**
      * Show the form for creating a new resource.

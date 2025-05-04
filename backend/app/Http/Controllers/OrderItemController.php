@@ -39,9 +39,24 @@ class OrderItemController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($OrderID)
     {
         //
+        $order = OrderItem::with('product', 'productVersion', 'productColor')
+        ->where('OrderID', $OrderID)
+        ->get();
+
+        if (!$order) {
+            return response()->json([
+                "message" => "Không tìm thấy danh mục",
+                "data" => null
+            ], 404);
+        }
+    
+        return response()->json([
+            "message" => "Hiển thị danh mục thành công",
+            "data" => $order,
+        ]);
     }
 
     /**

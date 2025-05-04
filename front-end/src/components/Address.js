@@ -6,14 +6,10 @@ import addressApi from '../api/addressApi';
 const Address = () => {
     const userId = localStorage.getItem('user_id');
     const [isFormVisible, setIsFormVisible] = useState(false);
+    const [selectedId, setSelectedId] = useState(null);
     const [addresses, setAddresses] = useState([]);
-    const handleAddSuccess = () => {
-        fetchAddresses(); // Gọi API load lại địa chỉ
-        closeForm();      // Ẩn form
-    };
-
-    const openForm = () => {
-
+    const openForm = (Id = null) => {
+        setSelectedId(Id);
         setIsFormVisible(true);
     };
 
@@ -59,6 +55,7 @@ const Address = () => {
 
     return (
         <>
+            <button className='btadd mt-2' onClick={() => openForm()}>Thêm địa chỉ</button>
             {addresses.map((item) => (
                 <div key={item.AddressID} className='mt-3 pt-2 d-flex align-items-center justify-content-between' style={{ borderTop: '1px solid #ddd' }}>
                     <div>
@@ -83,7 +80,7 @@ const Address = () => {
                             <p style={{ color: '#27AE60', cursor: 'pointer' }} onClick={() => handlesetdefault(item.AddressID)}>Đặt làm địa chỉ mặc định</p>
                         )}
                         <div className='d-flex '>
-                            <p onClick={() => openForm()} style={{ color: '#2D9CDB', cursor: 'pointer' }}>Chỉnh sửa địa chỉ</p>
+                            <p onClick={() => openForm(item.AddressID)} style={{ color: '#2D9CDB', cursor: 'pointer' }}>Chỉnh sửa địa chỉ</p>
                             <p style={{ color: 'red', cursor: 'pointer', marginLeft: '20px' }} onClick={() => handledelete(item.AddressID)}>Xóa</p>
                         </div>
                     </div>
@@ -95,8 +92,9 @@ const Address = () => {
                     <div className="overlay"></div> {/* Lớp overlay */}
                     {isFormVisible && (
                         <AddressForm
+                            id={selectedId}
                             onClose={closeForm}
-                            onSuccess={handleAddSuccess}// Gọi lại hàm fetchAddresses sau khi cập nhật
+                            onSuccess={fetchAddresses}// Gọi lại hàm fetchAddresses sau khi cập nhật
                         />
                     )}
                 </>

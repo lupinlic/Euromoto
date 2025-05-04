@@ -10,15 +10,17 @@ class ProductVersionController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $version = ProductVersion::all();
-        
-        return response()->json([
-            "message" => "đã lấy danh mục thành công",
-            "data" => $version,
-        ]);
-    }
+    public function index(Request $request)
+{
+    $perPage = $request->get('per_page', 10); // số item mỗi trang, mặc định 10
+
+    $color = ProductVersion::with('product.category.parent')->paginate($perPage);
+
+    return response()->json([
+        "message" => "Lấy danh sách thành công",
+        "data" => $color,
+    ]);
+}
 
     /**
      * Show the form for creating a new resource.
@@ -60,9 +62,22 @@ class ProductVersionController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($versionid)
     {
         //
+        $version = ProductVersion::find($versionid); // Tìm theo CustomerID
+
+        if (!$version) {
+            return response()->json([
+                "message" => "Không tìm thấy danh mục",
+                "data" => null
+            ], 404);
+        }
+    
+        return response()->json([
+            "message" => "Hiển thị danh mục thành công",
+            "data" => $version,
+        ]);
     }
 
     /**

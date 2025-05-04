@@ -21,6 +21,7 @@ function Login() {
             .then(response => {
                 localStorage.setItem('token', response.token);
                 localStorage.setItem('user_id', response.user.id);
+                localStorage.setItem('role', response.user.role);
                 HandleCheckRole(response.user.role)
                 window.location.reload();
                 // console.log(response.data.role)
