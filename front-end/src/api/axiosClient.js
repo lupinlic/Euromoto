@@ -3,7 +3,7 @@ import axios from 'axios';
 // import { apiUrl } from '../config';
 
 const axiosClient = axios.create({
-  baseURL: 'http://127.0.0.1:8000' + '/api',  // Sử dụng biến môi trường cho dễ quản lý
+  baseURL: 'https://api.dolamoto.io.vn' + '/api',  // Sử dụng biến môi trường cho dễ quản lý
   headers: {
     'Content-Type': 'application/json',
   },

@@ -37,7 +37,7 @@ function LikeProduct() {
                             <ProductFrame
                                 id={product.ProductID}
                                 name={product.ProductName}
-                                image={`http://127.0.0.1:8000/image/${product.CategoryParentName}/${product.CategoryName}/${product.ProductName}/${product.thumbnail}`}
+                                image={`https://api.dolamoto.io.vn/image/${product.CategoryParentName}/${product.CategoryName}/${product.ProductName}/${product.thumbnail}`}
                                 price={product.ProductPrice}
                                 onUnfavorite={handleUnfavorite}
                             />

@@ -28,7 +28,7 @@ const ProductForm = ({ id, onUpdate, onClose }) => {
                     setProductPrice(data.ProductPrice);
                     setParentId(data.category.CategoryParentID);
                     setCategoryId(data.CategoryID);
-                    setPreviewImage(`http://localhost:8000/image/${data.category.parent.CategoryParentName}/${data.category.CategoryName}/${data.ProductName}/${data.thumbnail.split('/').pop()}`);
+                    setPreviewImage(`https://api.dolamoto.io.vn/image/${data.category.parent.CategoryParentName}/${data.category.CategoryName}/${data.ProductName}/${data.thumbnail.split('/').pop()}`);
                     console.log(previewImage);
                 })
                 .catch((error) => {

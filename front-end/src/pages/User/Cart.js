@@ -132,7 +132,7 @@ function Cart() {
                                             style={{ marginRight: "10px" }}
                                         />
                                         <img style={{ width: '108px', height: '72px' }}
-                                            src={`http://127.0.0.1:8000/image/${cart.product.category?.parent?.CategoryParentName}/${cart.product.category?.CategoryName}/${cart.product.ProductName}/${cart.color.ProductColorImg}`}
+                                            src={`https://api.dolamoto.io.vn/image/${cart.product.category?.parent?.CategoryParentName}/${cart.product.category?.CategoryName}/${cart.product.ProductName}/${cart.color.ProductColorImg}`}
                                             alt={cart.ProductID}
                                         />
                                         <div className="ms-3">

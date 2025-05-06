@@ -70,7 +70,7 @@ function Product() {
                                 <td>{item.ProductPrice}</td>
                                 <td>{item.category.CategoryName}</td>
                                 <td>
-                                    <img src={`http://127.0.0.1:8000/image/${item.category?.parent?.CategoryParentName}/${item.category?.CategoryName}/${item.ProductName}/${item.thumbnail}`}
+                                    <img src={`https://api.dolamoto.io.vn/image/${item.category?.parent?.CategoryParentName}/${item.category?.CategoryName}/${item.ProductName}/${item.thumbnail}`}
                                         alt="Product" style={{ width: '50px', height: '50px' }} />
                                 </td>
 

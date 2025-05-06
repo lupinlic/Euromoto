@@ -37,7 +37,7 @@ function News() {
                         <div key={index} className="col-md-4 news" onClick={() => handleClick(item.NewsID)}>
                             <div className="image-hover1">
                                 <img style={{ width: '438px', height: '239px' }}
-                                    src={`http://127.0.0.1:8000/News/${item.Image}`} />
+                                    src={`https://api.dolamoto.io.vn/News/${item.Image}`} />
                             </div>
                             <p className="news-title" style={{ fontSize: '20px', fontWeight: '600', marginTop: '12px' }}>{item.Title}</p>
                             <p>{item.Content.length > 150 ? item.Content.slice(0, 150) + '...' : item.Content}</p>
