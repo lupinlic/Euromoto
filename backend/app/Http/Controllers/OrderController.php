@@ -290,4 +290,24 @@ public function updateStatus(Request $request, $id)
 
     return response()->json(['message' => 'Đã cập nhật trạng thái thành công', 'order' => $order]);
 }
+// đơn hàng mới
+public function getNewOrders()
+{
+    $orders = Order::where('is_notified', false)
+                    ->orderBy('OrderDate', 'desc')
+                    ->take(10)
+                    ->get();
+
+    return response()->json(['data' => $orders]);
+}
+// thong báo đơn hàng mới
+public function markOrdersAsNotified(Request $request)
+{
+    $ids = $request->input('OrderID', []);
+    if (!empty($ids)) {
+        Order::whereIn('OrderID', $ids)->update(['is_notified' => true]);
+    }
+
+    return response()->json(['message' => 'Đã cập nhật trạng thái thông báo']);
+}
 }

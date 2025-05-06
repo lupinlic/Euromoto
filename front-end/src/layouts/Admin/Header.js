@@ -2,6 +2,7 @@
 import { Link } from 'react-router-dom';
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import NewOrder from '../../components/NewOrder';
 
 function Header() {
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -32,7 +33,7 @@ function Header() {
                     </div>
                 </div>
                 <div className="col-md-1 text-end">
-                    <i class="fas fa-bell" style={{ color: '#62677399' }}></i>
+                    <NewOrder />
                 </div>
                 <div className="col-md-2 account " onClick={toggleSettings} ref={settingsRef} style={{ position: 'relative', cursor: 'pointer' }}>
                     <img className='' style={{ width: 50, borderRadius: '50%' }} src='https://e7.pngegg.com/pngimages/754/474/png-clipart-computer-icons-system-administrator-avatar-computer-network-heroes-thumbnail.png' alt />

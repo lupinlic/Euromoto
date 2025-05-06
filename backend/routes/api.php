@@ -100,6 +100,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/statistics', [OrderController::class, 'getAdvancedStatistics']);
         // trạng thái đơn hàng
         Route::put('/orders/{id}/update-status', [OrderController::class, 'updateStatus']);
+        // đơn hàng mới
+        Route::get('/admin/orders/new', [OrderController::class, 'getNewOrders']);
+        Route::post('/admin/orders/mark-notified', [OrderController::class, 'markOrdersAsNotified']);
+
     });
 });
 // công khai

@@ -21,7 +21,14 @@ const orderApi = {
         return axiosClient.put(`/orders/${id}/update-status`, {
             status: status,
         });
-    }
+    },
+    getNewOrders() {
+        return axiosClient.get('/admin/orders/new');
+    },
+    markAsRead(ids) {
+        return axiosClient.post('/admin/orders/mark-notified', { ids });
+    },
+
 
 
 

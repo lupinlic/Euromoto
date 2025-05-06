@@ -146,7 +146,7 @@ function Header() {
                                     <li>Giới thiệu</li>
                                 </NavLink>
                                 <Link className='position-relative header-menu-parent'>
-                                    <li>Sản phẩm</li>
+                                    <li><Link to="/Product">Sản phẩm</Link></li>
 
                                     <div className="dropdown-cate-item position-absolute d-flex align-items-center header-menu-child ">
                                         {categoryParent.map((parent) => (

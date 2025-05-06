@@ -88,7 +88,7 @@ function Order() {
                                 <td>{item.customer.Email}</td>
                                 <td>{item.OrderDate}</td>
                                 <td>{item.TotalPrice}</td>
-                                <td className='d-flex flex-column align-items-center justify-content-center'>{item.status}
+                                <td className=''>{item.status}<tr />
                                     {item.status === 'completed' ? <span className='text-success'>Hoàn thành</span> : <button style={{ width: '100px' }} onClick={() => openForm1(item.OrderID)} className='btn btn-warning btn-sm mr-2'>Cập nhật</button>}
 
                                 </td>

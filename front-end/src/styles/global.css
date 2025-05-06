@@ -454,3 +454,74 @@ body {
 .eye {
     margin-top: 12px;
 }
+
+/*  */
+.arrange.activefilter {
+    background-color: #ffb42e;
+    color: white;
+    border-color: #ffb42e;
+}
+
+/* đơn hàng mới */
+.notification-bell1 {
+    position: relative;
+    margin-right: 20px;
+    cursor: pointer;
+}
+
+.icon-wrapper1 {
+    position: relative;
+}
+
+.icon-wrapper1 svg {
+    width: 24px;
+    height: 24px;
+}
+
+.badge1 {
+    position: absolute;
+    top: -5px;
+    right: -6px;
+    background: red;
+    color: white;
+    font-size: 11px;
+    padding: 2px 5px;
+    border-radius: 50%;
+}
+
+.dropdown-box1 {
+    position: absolute;
+    right: 0;
+    top: 30px;
+    width: 260px;
+    background: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+    z-index: 1000;
+    padding: 10px;
+}
+
+.dropdown-title1 {
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.dropdown-empty1 {
+    font-size: 14px;
+    color: gray;
+}
+
+.dropdown-list1 {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.dropdown-list1 li {
+    padding: 5px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.dropdown-list1 li:last-child {
+    border-bottom: none;
+}
