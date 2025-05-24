@@ -189,8 +189,8 @@ function Account() {
                                                         <td>{order.OrderDate}</td>
                                                         <td>{order.AddressID}</td>
                                                         <td>{Number(order.TotalPrice).toLocaleString('vi-VN')} VNĐ</td>
-                                                        <td>{order.payment.Method}</td>
-                                                        <td>{order.payment.Status}</td>
+                                                        <td>{order?.payment?.Method}</td>
+                                                        <td>{order?.payment?.Status}</td>
                                                         <td>{order.status}</td>
                                                         <td><i onClick={() => openForm1(order.OrderID)} class="fa-solid fa-eye eye"></i></td>
                                                     </tr>
