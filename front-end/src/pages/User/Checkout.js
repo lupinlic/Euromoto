@@ -66,16 +66,39 @@ function Checkout() {
             ProductColorID: item.ProductColorID,
             Quantity: item.Quantity,
         })),
+        // Gửi thông tin địa chỉ và khách hàng
+        paymentMethod: selectedPayment,
+        emailContent: "Đã thanh toán",
+        customerEmail: addresses.Email,
+        orderDetails: selectedProducts.map(item => ({
+            ProductName: item.product.ProductName,
+            Quantity: item.Quantity,
+            Price: item.product.ProductPrice,
+        })),
+        orderId: Math.floor(Math.random() * 1000),
+        totalPrice: total,
+        shippingAddress: `${addresses.SpecificAddress}, ${addresses.Wards}, ${addresses.Districts}, ${addresses.Provinces}`, // Địa chỉ nhận hàng
+        customerName: addresses.FullName, // Tên người nhận
+        customerPhone: addresses.PhoneNumber,
+    };
+    const cartid = selectedProducts.map(item => item.CartID).filter(Boolean);
+    console.log("cartIds:", cartid);
+    const handlePayMomo = async () => {
+        try {
+
+            const res = await orderApi.getpayUrl(total, cartid, payload);
+            console.log("payUrl:", res.payUrl);
+            window.location.href = res.payUrl; // Chuyển hướng đến trang thanh toán MoMo
+        } catch (error) {
+            console.error("Lỗi khi lấy payUrl:", error.response?.data || error.message);
+        }
     };
 
-    const handleToThanks = async () => {
+    const handlePaymentCod = async () => {
         try {
             const res = await orderApi.addOrder(payload);
             console.log("Đặt hàng thành công:", payload);
-
             // xóa sản phẩm sau khi đặt hàng thành công
-
-
             await Promise.all(
                 selectedProducts.map(item =>
                     item.CartID ? cartApi.removetocart(item.CartID) : null
@@ -93,7 +116,16 @@ function Checkout() {
                 console.error("Lỗi không xác định:", err);
             }
         }
+    }
 
+    const handleToThanks = async () => {
+        if (selectedPayment === 'momo') {
+            await handlePayMomo();
+        } else if (selectedPayment === 'cod') {
+            await handlePaymentCod();
+        } else {
+            alert('Vui lòng chọn phương thức thanh toán');
+        }
     };
 
 
@@ -212,7 +244,7 @@ function Checkout() {
             : 'Thanh toán khi nhận hàng';
 
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/send-email', {
+            const response = await fetch('https://api.dolamoto.io.vn/api/send-email', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -243,6 +275,7 @@ function Checkout() {
             console.error('Error sending email:', error);
         }
     };
+    console.log("payment", selectedPayment);
     return (
         <>
             <Helmet>
@@ -297,17 +330,18 @@ function Checkout() {
                         </div>
                         <h6 className='mt-4'>Thanh toán</h6>
                         <div style={{ border: '1px solid #a4a4a4', borderRadius: '5px' }}>
+                            {/* crypto */}
                             <div className="d-flex align-items-center p-2" style={{ borderBottom: '1px solid #a4a4a4' }}>
                                 <input
                                     type="radio"
                                     name="payment"
-                                    value="bank"
-                                    checked={selectedPayment === "bank"}
+                                    value="crypto"
+                                    checked={selectedPayment === "crypto"}
                                     onChange={handlePaymentChange}
                                 />
                                 <label ><img style={{ margin: '0 12px' }} src="https://hstatic.net/0/0/global/design/seller/image/payment/other.svg?v=6" />Thanh toán qua ví tiền mã hóa</label>
                             </div>
-                            {selectedPayment === "bank" && (
+                            {selectedPayment === "crypto" && (
 
                                 !isConnected ? (
                                     <div className='d-flex align-items-center justify-content-center' style={{ marginTop: "10px", textAlign: "center" }}>
@@ -320,6 +354,18 @@ function Checkout() {
                                     </div>
                                 )
                             )}
+                            {/* tt momo */}
+                            <div className="d-flex align-items-center p-2" style={{ borderBottom: '1px solid #a4a4a4', borderTop: '1px solid #a4a4a4' }}>
+                                <input
+                                    type="radio"
+                                    name="payment"
+                                    value="momo"
+                                    checked={selectedPayment === "momo"}
+                                    onChange={handlePaymentChange}
+                                />
+                                <label ><img style={{ margin: '0 12px', width: '50px' }} src="https://developers.momo.vn/v3/vi/assets/images/icon-52bd5808cecdb1970e1aeec3c31a3ee1.png" />Thanh toán bằng ví Momo</label>
+                            </div>
+                            {/*TT nhận hàng */}
                             <div className="d-flex align-items-center p-2 " style={{ borderTop: '1px solid #a4a4a4' }}>
                                 <input
                                     type="radio"
@@ -347,7 +393,7 @@ function Checkout() {
                                     <img
                                         style={{ width: '50px', height: '50px', borderRadius: '5px', border: '1px solid #ddd' }}
                                         alt={item.ProductName}
-                                        src={`https://api.dolamoto.io.vn/image/${item.category?.parent?.CategoryParentName}/${item.category?.CategoryName}/${item.ProductName}/${item.thumbnail?.split('/').pop()}`} />
+                                        src={`http://127.0.0.1:8000/image/${item.category?.parent?.CategoryParentName}/${item.category?.CategoryName}/${item.ProductName}/${item.thumbnail?.split('/').pop()}`} />
                                     <div style={{ position: 'absolute', width: '25px', height: '25px', borderRadius: '50%', background: '#d71920', textAlign: 'center', top: '-15%', left: '15%', color: '#fff' }}>
                                         {selectedProducts.find(p => p.product.ProductID === item.ProductID).Quantity}
                                     </div>
