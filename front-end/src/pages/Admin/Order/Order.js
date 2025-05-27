@@ -67,7 +67,6 @@ function Order() {
             console.error('Có lỗi khi hủy đơn hàng:', error);
         }
     };
-    console.log(selectedOrder)
     return (
         <div style={{ backgroundColor: '#fff', minHeight: '100vh', paddingLeft: '4px' }}>
             <div className='container pt-4'>

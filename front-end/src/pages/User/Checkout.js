@@ -393,7 +393,7 @@ function Checkout() {
                                     <img
                                         style={{ width: '50px', height: '50px', borderRadius: '5px', border: '1px solid #ddd' }}
                                         alt={item.ProductName}
-                                        src={`http://127.0.0.1:8000/image/${item.category?.parent?.CategoryParentName}/${item.category?.CategoryName}/${item.ProductName}/${item.thumbnail?.split('/').pop()}`} />
+                                        src={`https://api.dolamoto.io.vn/image/${item.category?.parent?.CategoryParentName}/${item.category?.CategoryName}/${item.ProductName}/${item.thumbnail?.split('/').pop()}`} />
                                     <div style={{ position: 'absolute', width: '25px', height: '25px', borderRadius: '50%', background: '#d71920', textAlign: 'center', top: '-15%', left: '15%', color: '#fff' }}>
                                         {selectedProducts.find(p => p.product.ProductID === item.ProductID).Quantity}
                                     </div>
