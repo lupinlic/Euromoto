@@ -6,6 +6,7 @@ import { Helmet } from "react-helmet-async";
 import ProductFrame from "../../components/ProductFrame";
 import { useSearchParams } from 'react-router-dom';
 import productApi from '../../api/productApi';
+import { useLocation } from 'react-router-dom';
 
 function Product() {
     const [searchParams] = useSearchParams();
