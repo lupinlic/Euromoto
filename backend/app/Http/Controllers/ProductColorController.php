@@ -68,7 +68,10 @@ class ProductColorController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $products = ProductColor::with(['product.category.parent'])->findOrFail($id); // Eager loadingAdd commentMore actions
+    
+            // $products->thumbnail = url('image/' . $products->thumbnail);
+            return response()->json($products);
     }
 
     /**

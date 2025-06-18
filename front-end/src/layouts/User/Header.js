@@ -9,6 +9,12 @@ import { useContext } from 'react';
 import { CartContext } from '../../contexts/CartContext';
 
 function Header() {
+    const [searchTerm, setSearchTerm] = useState('')
+    const handleSearch = () => {
+        if (searchTerm.trim() !== '') {
+            navigate(`/Product?search=${encodeURIComponent(searchTerm)}`);
+        }
+    }
     const [subMenuOpen, setSubMenuOpen] = useState(false);
     const location = useLocation();
     const toggleSubMenu = () => {
@@ -174,9 +180,16 @@ function Header() {
                             </ul>
                         </div>
                         <div className='col-md-1 col-2'></div>
-                        <div className='col-md-2 col-10 d-flex align-items-center justify-content-between'>
-                            <div className='icon'>
-                                <i className="fas fa-search" />
+                        <div className={`col-md-2 col-10 d-flex align-items-center justify-content-between`}>
+                            <div className='icon d-flex search-container search-wrapper position-relative'>
+                                <div className="search-box">
+                                    <input type="text" className="search-input" placeholder="Tìm kiếm..." value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)} />
+                                    <button class="search-button" onClick={handleSearch}>Tìm</button>
+                                </div>
+
+                                <i className="fas fa-search search-icon"
+                                />
                             </div>
                             <Link to='/LikeProduct'>
                                 <div className="icon">
