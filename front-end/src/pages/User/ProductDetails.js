@@ -82,15 +82,14 @@ function ProductDetails() {
         productApi.getProductVersionByID(productID)
             .then((res) => {
                 setVersion(res.data);
-                console.log(res)
-                const total = res.data?.reduce((sum, version) => sum + version.ProductVersionQuantity, 0);
+                const total = res.data.reduce((sum, version) => sum + version.ProductVersionQuantity, 0);
                 setTotalQuantity(total);
             })
 
         productApi.getProductColorByID(productID)
             .then((res) => {
                 setColor(res.data);
-                if (res.data?.length > 0) {
+                if (res.data.length > 0) {
                     setSelectedImage(buildImageUrl(res.data[0]));
                     setLoai(res.data[0].product.category.CategoryName);
                     setThuonghieu(res.data[0].product.category.parent.CategoryParentName);
@@ -212,7 +211,7 @@ function ProductDetails() {
                     </div>
                     <div className='col-md-4'>
                         <p style={{ fontWeight: '600' }}>Giá bán:</p>
-                        <div className='price-box'>{Number(products.ProductPrice).toLocaleString('vi-VN')}
+                        <div className='price-box'>{Number(products?.ProductPrice).toLocaleString('vi-VN')}
                             <span className='line-under'>đ</span>
                         </div>
                         <p style={{ fontWeight: '600' }}>Phiên bản:</p>
@@ -371,7 +370,7 @@ function ProductDetails() {
                         titleDes='liên quan'
                     ></Title>
                     <div className='ms-4 d-flex'>
-                        {limitedProducts?.length > 0 ? (
+                        {limitedProducts.length > 0 ? (
                             limitedProducts.map((product) => (
                                 <ProductFrame
                                     id={product.ProductID}

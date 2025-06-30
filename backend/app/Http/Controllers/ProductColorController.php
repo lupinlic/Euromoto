@@ -111,7 +111,7 @@ class ProductColorController extends Controller
         }
     
         return response()->json([
-            "message" => "Đã lấy danh mục con thành công",
+            "message" => "Đã lấy màu sắc thành công",
             "data" => $color,
         ]);
     }
