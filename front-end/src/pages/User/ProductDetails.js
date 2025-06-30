@@ -82,6 +82,7 @@ function ProductDetails() {
         productApi.getProductVersionByID(productID)
             .then((res) => {
                 setVersion(res.data);
+                console.log(res)
                 const total = res.data.reduce((sum, version) => sum + version.ProductVersionQuantity, 0);
                 setTotalQuantity(total);
             })
