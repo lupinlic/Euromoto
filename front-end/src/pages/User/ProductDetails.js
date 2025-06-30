@@ -83,14 +83,14 @@ function ProductDetails() {
             .then((res) => {
                 setVersion(res.data);
                 console.log(res)
-                const total = res.data.reduce((sum, version) => sum + version.ProductVersionQuantity, 0);
+                const total = res.data?.reduce((sum, version) => sum + version.ProductVersionQuantity, 0);
                 setTotalQuantity(total);
             })
 
         productApi.getProductColorByID(productID)
             .then((res) => {
                 setColor(res.data);
-                if (res.data.length > 0) {
+                if (res.data?.length > 0) {
                     setSelectedImage(buildImageUrl(res.data[0]));
                     setLoai(res.data[0].product.category.CategoryName);
                     setThuonghieu(res.data[0].product.category.parent.CategoryParentName);
@@ -195,7 +195,7 @@ function ProductDetails() {
                             <img src={selectedImage} alt="Selected" width="100%" />
                         </div>
                         <div className='row mt-3'>
-                            {color.map((img, index) => (
+                            {color?.map((img, index) => (
 
                                 <div className='col-md-3 col-3 mt-1'>
 
@@ -217,7 +217,7 @@ function ProductDetails() {
                         </div>
                         <p style={{ fontWeight: '600' }}>Phiên bản:</p>
                         <div className="d-flex flex-wrap gap-2">
-                            {version.map((version, index) => (
+                            {version?.map((version, index) => (
                                 <div
                                     key={index}
                                     variant="outline-dark"
@@ -231,7 +231,7 @@ function ProductDetails() {
                         </div>
                         <p style={{ fontWeight: '600', marginTop: '12px' }}>Màu sắc:</p>
                         <div className="d-flex flex-wrap gap-2">
-                            {color.map((color, index) => (
+                            {color?.map((color, index) => (
                                 <div
                                     key={index}
                                     variant="outline-dark"
@@ -371,7 +371,7 @@ function ProductDetails() {
                         titleDes='liên quan'
                     ></Title>
                     <div className='ms-4 d-flex'>
-                        {limitedProducts.length > 0 ? (
+                        {limitedProducts?.length > 0 ? (
                             limitedProducts.map((product) => (
                                 <ProductFrame
                                     id={product.ProductID}
