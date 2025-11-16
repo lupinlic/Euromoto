@@ -18,6 +18,7 @@ import AddressForm from '../../components/AddressForm';
 
 
 function Checkout() {
+    const apiUrl = process.env.REACT_APP_API_URL;
     const { fetchCartCount } = useContext(CartContext);
     const location = useLocation();
     const selectedProducts = location.state?.selectedProducts || [];
@@ -244,7 +245,7 @@ function Checkout() {
             : 'Thanh toán khi nhận hàng';
 
         try {
-            const response = await fetch('https://api.dolamoto.io.vn/api/send-email', {
+            const response = await fetch(`${apiUrl}/api/send-email`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -393,7 +394,7 @@ function Checkout() {
                                     <img
                                         style={{ width: '50px', height: '50px', borderRadius: '5px', border: '1px solid #ddd' }}
                                         alt={item.ProductName}
-                                        src={`https://api.dolamoto.io.vn/image/${item.category?.parent?.CategoryParentName}/${item.category?.CategoryName}/${item.ProductName}/${item.thumbnail?.split('/').pop()}`} />
+                                        src={`${apiUrl}/image/${item.category?.parent?.CategoryParentName}/${item.category?.CategoryName}/${item.ProductName}/${item.thumbnail?.split('/').pop()}`} />
                                     <div style={{ position: 'absolute', width: '25px', height: '25px', borderRadius: '50%', background: '#d71920', textAlign: 'center', top: '-15%', left: '15%', color: '#fff' }}>
                                         {selectedProducts.find(p => p.product.ProductID === item.ProductID).Quantity}
                                     </div>

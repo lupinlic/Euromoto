@@ -13,6 +13,7 @@ import { CartContext } from '../../contexts/CartContext';
 import { useNavigate } from 'react-router-dom';
 
 function ProductDetails() {
+    const apiUrl = process.env.REACT_APP_API_URL;
     const navigate = useNavigate();
     const userId = localStorage.getItem('user_id');
     const [searchParams] = useSearchParams();
@@ -67,7 +68,7 @@ function ProductDetails() {
     };
 
     const buildImageUrl = (item) => {
-        return `https://api.dolamoto.io.vn/image/${item.product.category.parent.CategoryParentName}/${item.product.category.CategoryName}/${item.product.ProductName}/${item.ProductColorImg}`;
+        return `${apiUrl}/image/${item.product.category.parent.CategoryParentName}/${item.product.category.CategoryName}/${item.product.ProductName}/${item.ProductColorImg}`;
     };
 
     const fetchProducts = () => {
@@ -375,7 +376,7 @@ function ProductDetails() {
                                 <ProductFrame
                                     id={product.ProductID}
                                     name={product.ProductName}
-                                    image={`https://api.dolamoto.io.vn/image/${product.category.parent.CategoryParentName}/${product.category.CategoryName}/${product.ProductName}/${product.thumbnail}`}
+                                    image={`${apiUrl}/image/${product.category.parent.CategoryParentName}/${product.category.CategoryName}/${product.ProductName}/${product.thumbnail}`}
                                     price={product.ProductPrice}
                                 />
                             ))

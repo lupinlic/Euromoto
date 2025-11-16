@@ -6,6 +6,7 @@ import favoriteProductApi from '../../api/favoriteProductApi';
 import '../../styles/product.css'
 
 function LikeProduct() {
+    const apiUrl = process.env.REACT_APP_API_URL;
     const userId = localStorage.getItem('user_id');
     const [favoriteProducts, setFavoriteProducts] = useState([]);
     const fetchfavoriteProducts = async () => {
@@ -37,7 +38,7 @@ function LikeProduct() {
                             <ProductFrame
                                 id={product.ProductID}
                                 name={product.ProductName}
-                                image={`https://api.dolamoto.io.vn/image/${product.CategoryParentName}/${product.CategoryName}/${product.ProductName}/${product.thumbnail}`}
+                                image={`${apiUrl}/image/${product.CategoryParentName}/${product.CategoryName}/${product.ProductName}/${product.thumbnail}`}
                                 price={product.ProductPrice}
                                 onUnfavorite={handleUnfavorite}
                             />

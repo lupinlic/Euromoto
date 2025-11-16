@@ -9,6 +9,7 @@ function Thanks() {
     const location = useLocation();
     const { fetchCartCount } = useContext(CartContext);
     const hasOrdered = useRef(false);
+    const apiUrl = process.env.REACT_APP_API_URL;
     useEffect(() => {
 
         const queryParams = new URLSearchParams(location.search);
@@ -50,7 +51,7 @@ function Thanks() {
         const emailContent = "";
 
         try {
-            const response = await fetch('https://api.dolamoto.io.vn/api/send-email', {
+            const response = await fetch(`${apiUrl}/api/send-email`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

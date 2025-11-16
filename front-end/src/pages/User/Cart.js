@@ -7,6 +7,7 @@ import { useContext } from 'react';
 import { CartContext } from '../../contexts/CartContext';
 
 function Cart() {
+    const apiUrl = process.env.REACT_APP_API_URL;
     const navigate = useNavigate();
     const { fetchCartCount } = useContext(CartContext);
     const handletocheckout = () => {
@@ -136,7 +137,7 @@ function Cart() {
                                             style={{ marginRight: "10px" }}
                                         />
                                         <img style={{ width: '108px', height: '72px' }}
-                                            src={`https://api.dolamoto.io.vn/image/${cart.product.category?.parent?.CategoryParentName}/${cart.product.category?.CategoryName}/${cart.product.ProductName}/${cart.color.ProductColorImg}`}
+                                            src={`${apiUrl}/image/${cart.product.category?.parent?.CategoryParentName}/${cart.product.category?.CategoryName}/${cart.product.ProductName}/${cart.color.ProductColorImg}`}
                                             alt={cart.ProductID}
                                         />
                                         <div className="ms-3">

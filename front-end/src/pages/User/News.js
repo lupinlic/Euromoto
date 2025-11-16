@@ -5,6 +5,7 @@ import newsApi from '../../api/newApi';
 import { useNavigate } from "react-router-dom";
 
 function News() {
+    const apiUrl = process.env.REACT_APP_API_URL;
     const [news, setNews] = useState([]);
     const navigate = useNavigate();
     useEffect(() => {
@@ -37,7 +38,7 @@ function News() {
                         <div key={index} className="col-md-4 news" onClick={() => handleClick(item.NewsID)}>
                             <div className="image-hover1">
                                 <img style={{ width: '438px', height: '239px' }}
-                                    src={`https://api.dolamoto.io.vn/News/${item.Image}`} />
+                                    src={`${apiUrl}/News/${item.Image}`} />
                             </div>
                             <p className="news-title" style={{ fontSize: '20px', fontWeight: '600', marginTop: '12px' }}>{item.Title}</p>
                             <p>{item.Content.length > 150 ? item.Content.slice(0, 150) + '...' : item.Content}</p>

@@ -9,6 +9,7 @@ import productApi from '../../api/productApi';
 import { useLocation } from 'react-router-dom';
 
 function Product() {
+    const apiUrl = process.env.REACT_APP_API_URL;
     const [searchParams] = useSearchParams();
     const parentId = searchParams.get("parent");
     const categoryId = searchParams.get("category");
@@ -205,7 +206,7 @@ function Product() {
                                     <ProductFrame
                                         id={product.ProductID}
                                         name={product.ProductName}
-                                        image={`https://api.dolamoto.io.vn/image/${product.category?.parent?.CategoryParentName}/${product.category?.CategoryName}/${product.ProductName}/${product.thumbnail}`}
+                                        image={`${apiUrl}/image/${product.category?.parent?.CategoryParentName}/${product.category?.CategoryName}/${product.ProductName}/${product.thumbnail}`}
                                         price={product.ProductPrice}
                                     />
                                 ))
