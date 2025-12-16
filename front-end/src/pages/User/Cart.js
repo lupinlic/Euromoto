@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import cartApi from "../../api/cartApi";
 import { useContext } from 'react';
 import { CartContext } from '../../contexts/CartContext';
+import { toast } from "react-toastify";
 
 function Cart() {
     const apiUrl = process.env.REACT_APP_API_URL;
@@ -12,7 +13,7 @@ function Cart() {
     const { fetchCartCount } = useContext(CartContext);
     const handletocheckout = () => {
         if (selectedItems.length === 0) {
-            alert("Vui lòng chọn ít nhất một sản phẩm để thanh toán.");
+            toast.error("Vui lòng chọn ít nhất một sản phẩm để thanh toán.");
             return;
         }
         const selectedProducts = cart.filter(item => selectedItems.includes(item.CartID));
@@ -147,7 +148,7 @@ function Cart() {
                                         </div>
                                     </div>
                                     <div className="col-md-2 d-none d-md-block">
-                                        <b style={{ color: '#ec3d40' }}>{Number(cart.product.ProductPrice).toLocaleString('vi-VN')} đ</b>
+                                        <b style={{ color: '#014686' }}>{Number(cart.product.ProductPrice).toLocaleString('vi-VN')} đ</b>
                                     </div>
                                     <div className="col-md-2 col-6">
                                         <div className='input-number-product m-0'>
@@ -157,7 +158,7 @@ function Cart() {
                                         </div>
                                     </div>
                                     <div className="col-md-2 col-6">
-                                        <b style={{ color: '#ec3d40' }}>{Number(cart.product.ProductPrice * cart.Quantity).toLocaleString('vi-VN')} đ</b>
+                                        <b style={{ color: '#014686' }}>{Number(cart.product.ProductPrice * cart.Quantity).toLocaleString('vi-VN')} đ</b>
                                     </div>
                                 </div>
                             ))}
@@ -175,7 +176,7 @@ function Cart() {
                             <div className="col-md-3">
                                 <div className="d-flex align-items-center justify-content-between">
                                     <p className="m-0">Tổng tiền:</p>
-                                    <b style={{ color: '#ec3d40' }}>{totalAmount.toLocaleString('vi-VN')} đ</b>
+                                    <b style={{ color: '#014686' }}>{totalAmount.toLocaleString('vi-VN')} đ</b>
                                 </div>
                                 <button onClick={handletocheckout} className="bt-thanhtoan">Thanh toán</button>
 

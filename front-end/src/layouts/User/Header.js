@@ -76,7 +76,7 @@ function Header() {
         <div className='header container'>
             <div className='h-100 row align-items-center'>
                 <div className='col-md-2 col-5'>
-                    <img className='w-100' src='https://bizweb.dktcdn.net/100/519/812/themes/954445/assets/logo.png?1741709416058' alt='' />
+                    <img className='' style={{width:'125px', height:'80px'}} src='https://bizweb.dktcdn.net/100/040/180/themes/52150/assets/logo.png?1664252357226' alt='' />
                 </div>
                 <div className='col-md-10 col-7'>
                     <div className='header-topbar row d-none d-md-flex'>

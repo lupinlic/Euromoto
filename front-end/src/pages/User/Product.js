@@ -7,6 +7,8 @@ import ProductFrame from "../../components/ProductFrame";
 import { useSearchParams } from 'react-router-dom';
 import productApi from '../../api/productApi';
 import { useLocation } from 'react-router-dom';
+import LoadingOverlay from '../../components/LoadingOverlay';
+
 
 function Product() {
     const apiUrl = process.env.REACT_APP_API_URL;
@@ -19,65 +21,69 @@ function Product() {
     const useQuery = () => new URLSearchParams(useLocation().search);
     const query = useQuery();
     const searchTerm = query.get("search") || "";
-    useEffect(() => {
+     const [loading, setLoading] = useState(false);
+        useEffect(() => {
         const fetchProducts = async () => {
             try {
+                setLoading(true); 
+
                 let res;
                 if (categoryId) {
-                    // Lọc theo category con
                     res = await productApi.getproductbyCategory(categoryId);
-                    // setProducts(res.data);
                 } else if (parentId) {
-                    // Lọc theo category cha
                     res = await productApi.getproductbyCategoryparent(parentId);
-                    // setProducts(res.data);
                 } else {
-                    // Không có lọc gì
                     res = await productApi.getAll();
-                    // setProducts(res);
                 }
 
                 let filtered = res.data || res;
-                if (searchTerm && searchTerm.trim() !== '') {
+
+                // Lọc theo search
+                if (searchTerm.trim() !== "") {
                     const lowerSearch = searchTerm.toLowerCase();
                     filtered = filtered.filter(product =>
                         product.ProductName.toLowerCase().includes(lowerSearch)
                     );
                 }
+
                 // Lọc theo mức giá
                 if (selectedPrices.length > 0 && !selectedPrices.includes("all")) {
                     filtered = filtered.filter(product => {
                         const price = product.ProductPrice;
                         return selectedPrices.some(priceRange => {
-                            if (priceRange === 'under1') return price < 1000000;
-                            if (priceRange === '1to10') return price >= 1000000 && price <= 10000000;
-                            if (priceRange === '10to20') return price > 10000000 && price <= 20000000;
-                            if (priceRange === '20to50') return price > 20000000 && price <= 50000000;
-                            if (priceRange === 'above50') return price > 50000000;
+                            if (priceRange === "under1") return price < 1000000;
+                            if (priceRange === "1to10") return price >= 1000000 && price <= 10000000;
+                            if (priceRange === "10to20") return price > 10000000 && price <= 20000000;
+                            if (priceRange === "20to50") return price > 20000000 && price <= 50000000;
+                            if (priceRange === "above50") return price > 50000000;
                             return false;
                         });
                     });
                 }
+
                 // Sắp xếp
                 if (sortOption) {
                     filtered = [...filtered].sort((a, b) => {
                         switch (sortOption) {
-                            case 'name_asc':
+                            case "name_asc":
                                 return a.ProductName.localeCompare(b.ProductName);
-                            case 'name_desc':
+                            case "name_desc":
                                 return b.ProductName.localeCompare(a.ProductName);
-                            case 'price_asc':
+                            case "price_asc":
                                 return a.ProductPrice - b.ProductPrice;
-                            case 'price_desc':
+                            case "price_desc":
                                 return b.ProductPrice - a.ProductPrice;
                             default:
                                 return 0;
                         }
                     });
                 }
+
                 setProducts(filtered);
             } catch (err) {
-                console.error("Lỗi lấy sản phẩm:", err);
+                console.error("Error fetch products:", err);
+            } finally {
+                setLoading(false); 
             }
         };
 
@@ -96,6 +102,7 @@ function Product() {
     };
     return (
         <div>
+            {loading && <LoadingOverlay />}
             <Helmet>
                 <title>Sản phẩm</title>
             </Helmet>
@@ -105,13 +112,13 @@ function Product() {
                 <div className='row'>
                     <div className='col-md-2'>
                         <div className='content-menu d-flex flex-column'>
-                            <h5 style={{ color: '#d71920', fontSize: '18px' }}>Danh mục sản phẩm</h5>
+                            <h5 style={{ color: '#014686', fontSize: '18px' }}>Danh mục sản phẩm</h5>
                             <Link>Xe ga</Link>
                             <Link>Xe côn tay</Link>
                             <Link>Xe số</Link>
                         </div>
                         <div className='content-menu mt-3'>
-                            <h5 style={{ color: '#d71920', fontSize: '18px' }}>Chọn mức giá</h5>
+                            <h5 style={{ color: '#014686', fontSize: '18px' }}>Chọn mức giá</h5>
                             <div className="form-check m-2 chose-price">
                                 <input className="form-check-input custom-checkbox" type="checkbox" value="under1" onChange={handlePriceChange} />
                                 <label className="form-check-label" htmlFor="checkbox1" style={{ fontSize: '17px', margin: '0' }}>

@@ -23,7 +23,7 @@ function Header() {
             <div className="header-admin row" style={{ height: '70px', alignItems: 'center' }}>
                 <div className="col-md-2">
                     <img className='' style={{ width: 50, borderRadius: '50%', }} src='' alt />
-                    <i style={{ fontFamily: '"Style Script"', fontSize: "26px" }}>Dola Moto</i>
+                    <i style={{ fontFamily: '"Style Script"', fontSize: "26px" }}>Hoàng Kiên</i>
                 </div>
                 <div className="col-md-6 d-flex " style={{ alignItems: 'center' }}>
                     <i class="fas fa-list" style={{ color: '#62677399' }}></i>

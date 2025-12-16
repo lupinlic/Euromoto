@@ -1,37 +1,50 @@
-// src/api/axiosClient.js
-import axios from 'axios';
-// import { apiUrl } from '../config';
+import axios from "axios";
 
-const apiUrl = process.env.REACT_APP_API_URL;
+const apiUrl = process.env.REACT_APP_API_URL; 
 
 const axiosClient = axios.create({
-  baseURL: {apiUrl} + '/api',  
+  baseURL: apiUrl + "/api",
+  timeout: 10000, // 10s → giúp tránh treo request
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
-// Interceptor để xử lý request và response
-axiosClient.interceptors.request.use(config => {
-  // Thêm token nếu cần
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
+// ---------------------------------------------------------------------
+// REQUEST INTERCEPTOR
+// ---------------------------------------------------------------------
+axiosClient.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
 
-  if (config.headers['Custom-Upload']) {
-    config.headers["Content-Type"] = "multipart/form-data";
-  }
-  return config;
-});
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
 
+    // Nếu là upload file
+    if (config.headers["Custom-Upload"]) {
+      config.headers["Content-Type"] = "multipart/form-data";
+    }
+
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// ---------------------------------------------------------------------
+// RESPONSE INTERCEPTOR
+// ---------------------------------------------------------------------
 axiosClient.interceptors.response.use(
-  response => response.data,  // Lấy trực tiếp data từ response
-  error => {
-    // Xử lý lỗi
+  (response) => response.data,
+  (error) => {
+    // Token hết hạn → logout hoặc refresh token
+    if (error.response?.status === 401) {
+      localStorage.removeItem("token");
+      // window.location.href = "/login"; // nếu muốn tự logout
+    }
+
     return Promise.reject(error);
   }
 );
-console.log("Calling login:", 'http://127.0.0.1:8000' + '/api/login');
 
 export default axiosClient;

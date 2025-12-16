@@ -9,7 +9,7 @@ export default function ContactIcon() {
             <i class="fas fa-bell " style={{ color: '#fff' }}
                 onClick={() => setShowContact(!showContact)}></i>
             {showContact && (
-                <div className="showmessage" style={{ position: 'absolute', padding: '12px', width: '280px', height: '260px', background: '#d71920', top: '-580%', left: '90%', color: '#fff', borderRadius: '15px' }}>
+                <div className="showmessage" style={{ position: 'absolute', padding: '12px', width: '280px', height: '260px', background: '#014686', top: '-580%', left: '90%', color: '#fff', borderRadius: '15px' }}>
                     <p onClick={() => setShowContact(!showContact)} style={{ position: 'absolute', right: '10px' }}>X</p>
                     <h5 className="mt-3">Tích hợp sẵn các ứng dụng</h5>
                     <ul style={{ fontSize: '14px' }}>

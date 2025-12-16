@@ -368,8 +368,8 @@ public function momo_payment(Request $request)
     $amount = $request->Total;
 
     $orderId = time() . "";
-    $redirectUrl = "https://dolamoto.io.vn/Thanks";
-    $ipnUrl = "https://dolamoto.io.vn/Thanks";
+    $redirectUrl = "http://localhost:3000/Thanks";
+    $ipnUrl = "http://localhost:3000/Thanks";
     $extraData = json_encode([
         'cartid' => $cartid,
         'payload' => $payload,

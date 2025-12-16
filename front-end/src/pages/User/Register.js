@@ -40,7 +40,7 @@ function Register() {
             <div className="register-container">
                 <div className="register-header">
                     <h1>Đăng ký</h1>
-                    <p>Tạo tài khoản mới tại Dola Moto</p>
+                    <p>Tạo tài khoản mới tại Hoàng Kiên</p>
                 </div>
                 <form>
                     <div className="mb-3">
@@ -74,7 +74,7 @@ function Register() {
                         // onChange={(e)=>setreUser_password(e.target.value)}
                         />
                     </div> */}
-                    <button type="submit" className="btn btn-pink mt-3" style={{ backgroundColor: '#e51414', color: '#fff' }}
+                    <button type="submit" className="btn btn-pink mt-3" style={{ backgroundColor: '#014686', color: '#fff' }}
                         onClick={(e) => HandleRegister(e)}
                     >Đăng ký</button>
                 </form>

@@ -10,7 +10,7 @@ const Bt = ({ name, des }) => {
     return (
         <div
             onClick={() => handleToProduct(des)}
-            className="bt d-flex align-items-center justify-content-center" style={{ borderRadius: '20px', padding: '8px', background: '#fff', color: 'red' }}>
+            className="bt d-flex align-items-center justify-content-center" style={{ borderRadius: '20px', padding: '8px', background:"none", color: '#014686' }}>
             <p className='m-0'>{name}</p>
         </div>
     )

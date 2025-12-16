@@ -15,7 +15,7 @@
     border: none;
     box-shadow: none;
     background-color: transparent;
-    border: 1px solid #d71920;
+    border: 1px solid #014686;
     border-radius: 5px;
     padding: 2px;
 }
@@ -42,7 +42,7 @@
     display: inline-block;
     width: 35px;
     height: 35px;
-    background: #d71920;
+    background: #014686;
     float: left;
     color: #fff;
     text-align: center;
@@ -79,7 +79,7 @@
 
 .buynow {
     display: flex;
-    background: #d71920;
+    background: #014686;
     border-radius: 5px;
     color: #fff;
     margin-top: 10px;
@@ -102,53 +102,26 @@
 
 .service-pro {
     text-align: center;
-    border: 1px solid #d71920;
+    border: 1px solid #014686;
     border-radius: 10px;
     overflow: hidden;
     margin-bottom: 20px;
 }
 
 .service-pro .title {
-    background: #d71920;
+    background: #014686;
     color: #fff;
     padding: 10px;
     font-size: 18px;
     font-weight: bold;
 }
 
-.service-pro ul {
-    padding: 10px;
-    display: -ms-flexbox;
-    display: flex;
-    -ms-flex-wrap: wrap;
-    flex-wrap: wrap;
-    margin-right: -5px;
-    margin-left: -5px;
-}
 
-.service-pro ul li {
-    flex: 0 0 50%;
-    max-width: 50%;
-    position: relative;
-    width: 100%;
-    padding-right: 5px;
-    padding-left: 5px;
-    margin-bottom: 10px;
-}
-
-.service-pro ul li .thumb-img {
-    width: 50px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: auto;
-}
 
 .product-tab {
     margin-top: 20px;
     padding: 20px;
-    border: 1px solid #d71920;
+    border: 1px solid #014686;
     border-radius: 10px;
     width: 100%;
     height: auto;
@@ -159,4 +132,39 @@
     font-size: 40px;
     font-weight: bold;
     margin-bottom: 20px;
+}
+.commit-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 14px;
+    padding: 10px;
+}
+
+.commit-list li {
+    display: flex;
+    flex-direction: column;
+}
+
+.commit-list .top-line {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.commit-list .check {
+    color: #007bff; /* xanh dương */
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.commit-list b {
+    font-size: 16px;
+}
+
+.commit-list p {
+    margin: 2px 0 0 24px; /* lùi vào dưới title */
+    font-size: 12px;
+    color: #555;
 }

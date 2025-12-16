@@ -50,7 +50,7 @@ function Login() {
             <div className="login-container">
                 <div className="login-header">
                     <h1>Đăng nhập</h1>
-                    <p>Chào mừng bạn đến với Dola Moto</p>
+                    <p>Chào mừng bạn đến với Hoàng Kiên</p>
                 </div>
                 <form
                 // onSubmit={handleLogin}
@@ -77,7 +77,7 @@ function Login() {
                     <div className="d-flex justify-content-between">
                         <Link to="" className="forgot-password">Quên mật khẩu?</Link>
                     </div>
-                    <button type="submit" className="btn btn-pink mt-3" style={{ backgroundColor: '#ec1a1a', color: '#fff' }}
+                    <button type="submit" className="btn btn-pink mt-3" style={{ backgroundColor: '#014686', color: '#fff' }}
                         // onClick={handleLogin}
                         onClick={(e) => { HandleLogin(e) }}
                     >Đăng nhập</button>

@@ -15,7 +15,7 @@ import { CartContext } from '../../contexts/CartContext';
 import productApi from '../../api/productApi';
 import { ethers } from 'ethers';
 import AddressForm from '../../components/AddressForm';
-
+import { toast } from 'react-toastify';
 
 function Checkout() {
     const apiUrl = process.env.REACT_APP_API_URL;
@@ -125,7 +125,7 @@ function Checkout() {
         } else if (selectedPayment === 'cod') {
             await handlePaymentCod();
         } else {
-            alert('Vui lòng chọn phương thức thanh toán');
+            toast.error('Vui lòng chọn phương thức thanh toán!');
         }
     };
 
@@ -426,7 +426,7 @@ function Checkout() {
                         )}
                         <div className='d-flex align-items-center justify-content-between mt-2'>
                             <Link to='/Cart' style={{ color: '#d71920' }}> Quay về giỏ hàng</Link>
-                            <button onClick={handleToThanks} style={{ width: '100px', height: '40px', borderRadius: '5px', border: 'none', background: '#d71920', color: '#fff' }}>Đặt hàng</button>
+                            <button onClick={handleToThanks} style={{ width: '100px', height: '40px', borderRadius: '5px', border: 'none', background: '#014686', color: '#fff' }}>Đặt hàng</button>
                         </div>
                     </div>
                 </div>

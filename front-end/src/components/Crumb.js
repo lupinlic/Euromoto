@@ -6,7 +6,7 @@ const Crumb = ({ name }) => {
             <div className='container d-flex align-items-center h-100' >
                 <span>Trang chủ</span>
                 <span style={{ marginLeft: '8px' }}>/</span>
-                <span style={{ color: 'red', marginLeft: '8px' }}>{name}</span>
+                <span style={{ color: '#014686', marginLeft: '8px' }}>{name}</span>
             </div>
 
         </div>

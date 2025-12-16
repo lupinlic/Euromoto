@@ -3,6 +3,7 @@ import { CartContext } from '../contexts/CartContext';
 import favoriteProductApi from '../api/favoriteProductApi';
 import "../styles/productFrame.css"
 import { useNavigate } from "react-router-dom";
+    import { toast } from "react-toastify";
 
 const ProductFrame = ({ image, name, price, id, onUnfavorite }) => {
     const { fetchfavoriteCount } = useContext(CartContext);
@@ -11,6 +12,7 @@ const ProductFrame = ({ image, name, price, id, onUnfavorite }) => {
     const { favorites, setFavorites, userId } = useContext(CartContext);
     const [isFavorited, setIsFavorited] = useState(false);
     const navigate = useNavigate();
+
 
     const handleToProductDetails = () => {
         navigate(`/ProductDetails?product=${id}`);
@@ -23,7 +25,7 @@ const ProductFrame = ({ image, name, price, id, onUnfavorite }) => {
 
     const handleToggleFavorite = async () => {
         if (!user_Id) {
-            alert('Bạn cần đăng nhập để sử dụng tính năng này!');
+            toast.error('Bạn cần đăng nhập để sử dụng tính năng này!');
             return;
         }
 
@@ -34,10 +36,10 @@ const ProductFrame = ({ image, name, price, id, onUnfavorite }) => {
 
             if (response.favorited) {
                 setFavorites(prevFavorites => [...prevFavorites, { ProductID: id, name, price, image }]);
-                setMessage("Đã thêm vào danh sách yêu thích");
+                toast.success("Đã thêm vào danh sách yêu thích");
             } else {
                 setFavorites(prev => prev.filter(item => item.ProductID !== id));
-                setMessage("Đã xóa khỏi danh sách yêu thích");
+                toast.success("Đã xóa khỏi danh sách yêu thích");
                 if (onUnfavorite) {
                     onUnfavorite(id);
                 }

@@ -7,12 +7,14 @@ import './App.css';
 import ScrollToTop from './components/ScrollToTop';
 import { HelmetProvider } from "react-helmet-async";
 import PrivateRoute from './components/PrivateRoute'; // thêm dòng này
-
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 function App() {
   return (
     <HelmetProvider>
       <Router>
         <ScrollToTop />
+        <ToastContainer position="top-right" autoClose={1500} />
         <Routes>
           {publicRoutes.map((route, index) => {
             const Page = route.component;

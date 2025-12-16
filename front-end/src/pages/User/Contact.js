@@ -52,7 +52,7 @@ function Contact() {
             <div className='container mt-3 contact'>
                 <div className='row'>
                     <div className='col-md-6'>
-                        <p style={{ fontSize: '24px', color: '#d71920' }}>Cửa hàng Euro Moto</p>
+                        <p style={{ fontSize: '24px', color: '#014686' }}>Cửa hàng Hoàng Kiên</p>
                         <p>Chào mừng quý khách đến với Dola Moto – điểm đến đáng tin cậy cho những người yêu thích xe máy tại khu vực! Chúng tôi chuyên cung cấp các dòng xe máy chất lượng từ những thương hiệu hàng đầu như Honda, Yamaha và SYM,
                             đáp ứng nhu cầu đa dạng của khách hàng từ những mẫu xe tay ga tiện lợi, đến xe số bền bỉ và mạnh mẽ.</p>
                         <div className='row mt-5'>
@@ -102,7 +102,7 @@ function Contact() {
                         </div>
                     </div>
                     <div className='col-md-6'>
-                        <p style={{ fontSize: '24px', color: '#d71920' }}>Liên hệ với chúng tôi</p>
+                        <p style={{ fontSize: '24px', color: '#014686' }}>Liên hệ với chúng tôi</p>
                         <p>Nếu bạn có thắc mắc gì, có thể gửi yêu cầu cho chúng tôi, và chúng tôi sẽ liên lạc lại với bạn sớm nhất có thể .</p>
 
                         <input type='text' placeholder='Họ tên' value={customer?.FullName || ''} readOnly />

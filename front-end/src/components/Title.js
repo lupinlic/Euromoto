@@ -5,7 +5,7 @@ const Title = ({ titleName, titleDes }) => {
         <div className='text-center mt-5 title'>
             <p style={{ fontSize: '40px', fontWeight: '600' }}>
                 <span className='title-name me-2'>{titleName}</span>
-                <span style={{ color: 'red' }}>{titleDes}</span>
+                <span style={{ color: '#014686' }}>{titleDes}</span>
             </p>
         </div>
     )

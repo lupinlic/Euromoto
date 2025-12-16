@@ -17,6 +17,7 @@ import StoreSystem from "../pages/User/StoreSystem";
 import LikeProduct from "../pages/User/LikeProduct";
 import News from "../pages/User/News";
 import NewDetails from "../pages/User/NewsDetails";
+import OrderFailed from "../pages/User/OrderFailed";
 // admin
 import Accounts from "../pages/Admin/Accounts/Account";
 import CarCompany from "../pages/Admin/CarCompany/CarCompany";
@@ -77,6 +78,9 @@ const publicRoutes = [
     },
     {
         path: '/NewsDetails/:id', component: NewDetails, Element: NewDetails
+    },
+    {
+        path: '/Order-Failed', component: OrderFailed
     },
 
 

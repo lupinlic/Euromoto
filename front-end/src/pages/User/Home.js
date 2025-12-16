@@ -242,9 +242,9 @@ function Home() {
                                 <li
                                     onClick={() => setParentId(cat.CategoryParentID)}
                                     className={`${parentId === cat.CategoryParentID
-                                        ? 'category-all_active'
-                                        : 'bg-white text-black'
-                                        }`} >
+                                        ? 'category-all_active text-white'
+                                        : 'bg-white'
+                                        } border-0` } >
                                     {cat.CategoryParentName}
                                 </li>
                             ))}
