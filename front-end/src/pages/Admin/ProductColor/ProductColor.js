@@ -76,7 +76,7 @@ function ProductColor() {
                                     <td>{item.product.ProductName}</td>
                                     <td>{item.ProductColorName}</td>
                                     <td>
-                                        <img src={`https://api.dolamoto.io.vn/image/${item.product.category?.parent?.CategoryParentName}/${item.product.category?.CategoryName}/${item.product.ProductName}/${item.ProductColorImg}`}
+                                        <img src={`http://127.0.0.1:8000/image/${item.product.category?.parent?.CategoryParentName}/${item.product.category?.CategoryName}/${item.product.ProductName}/${item.ProductColorImg}`}
                                             alt="Product" style={{ width: '50px', height: '50px' }} />
                                     </td>
 
