@@ -54,7 +54,7 @@ function NewOrder() {
         <div className="notification-bell1" ref={bellRef}>
             <div className="icon-wrapper1" onClick={toggleDropdown}>
                 <i class="fas fa-bell" style={{ color: '#62677399' }}></i>
-                {orders.length > 0 && <span className="badge1">{orders.length}</span>}
+                {orders.length > 0 && <span className="badge1">{orders.length}+</span>}
             </div>
             {showDropdown && (
                 <div className="dropdown-box1">

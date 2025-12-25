@@ -13,15 +13,22 @@ function Thanks() {
 
     useEffect(() => {
         const queryParams = new URLSearchParams(location.search)
-        const extraDataEncoded = queryParams.get("extraData")
+        const paymentMethod = queryParams.get("payment")
         const resultCode = queryParams.get("resultCode")
+        const extraDataEncoded = queryParams.get("extraData")
 
-        // ❌ Thanh toán thất bại → sang trang thông báo
-        if (resultCode !== "0") {
+        // ✅ COD → không cần xử lý gì thêm
+        if (paymentMethod === "cod") {
+            return
+        }
+
+        // ❌ MoMo thất bại
+        if (resultCode && resultCode !== "0") {
             navigate('/order-failed')
             return
         }
 
+        // ✅ MoMo thành công
         if (extraDataEncoded && !hasOrdered.current) {
             hasOrdered.current = true
 
@@ -32,25 +39,22 @@ function Thanks() {
             const createOrder = async () => {
                 try {
                     await orderApi.addOrder(payload)
-
                     await sendEmailNotification(payload)
 
                     await Promise.all(
-                        cartid?.map(item =>
-                            item ? cartApi.removetocart(item) : null
-                        )
+                        cartid.map(id => cartApi.removetocart(id))
                     )
 
                     fetchCartCount()
                 } catch (err) {
-                    console.error("Tạo đơn hàng thất bại:", err)
-                    navigate('/Order-Failed') 
+                    navigate('/order-failed')
                 }
             }
 
             createOrder()
         }
     }, [location.search])
+
 
     const sendEmailNotification = async (payload) => {
         try {

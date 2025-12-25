@@ -91,6 +91,7 @@ function Checkout() {
             console.log("payUrl:", res.payUrl);
             window.location.href = res.payUrl; // Chuyển hướng đến trang thanh toán MoMo
         } catch (error) {
+            toast.error('chỉ áp chụng cho đơn hàng dưới 50.000.000đ')
             console.error("Lỗi khi lấy payUrl:", error.response?.data || error.message);
         }
     };
@@ -108,8 +109,9 @@ function Checkout() {
             fetchCartCount(); // Cập nhật lại số lượng giỏ hàng
             // Điều hướng sang trang cảm ơn
             sendEmailNotification();
-            navigate('/Thanks');
+            navigate('/Thanks?payment=cod')
         } catch (err) {
+            navigate('/order-failed')
             if (err.response?.data?.errors) {
                 console.log("Lỗi validate:", err.response.data.errors);
                 alert(JSON.stringify(err.response.data.errors));
@@ -332,7 +334,7 @@ function Checkout() {
                         <h6 className='mt-4'>Thanh toán</h6>
                         <div style={{ border: '1px solid #a4a4a4', borderRadius: '5px' }}>
                             {/* crypto */}
-                            <div className="d-flex align-items-center p-2" style={{ borderBottom: '1px solid #a4a4a4' }}>
+                            {/* <div className="d-flex align-items-center p-2" style={{ borderBottom: '1px solid #a4a4a4' }}>
                                 <input
                                     type="radio"
                                     name="payment"
@@ -341,7 +343,7 @@ function Checkout() {
                                     onChange={handlePaymentChange}
                                 />
                                 <label ><img style={{ margin: '0 12px' }} src="https://hstatic.net/0/0/global/design/seller/image/payment/other.svg?v=6" />Thanh toán qua ví tiền mã hóa</label>
-                            </div>
+                            </div> */}
                             {selectedPayment === "crypto" && (
 
                                 !isConnected ? (
@@ -378,9 +380,7 @@ function Checkout() {
                                 <label><img style={{ margin: '0 12px' }} src="https://hstatic.net/0/0/global/design/seller/image/payment/cod.svg?v=6" />Thanh toán khi nhận hàng</label>
 
                             </div>
-                            {selectedPayment === "cod" && (
-                                <div className="text-center p-3 ">Chỉ áp dụng đơn hàng nhỏ hơn 3.000.000đ</div>
-                            )}
+
                         </div>
                     </div>
                     <div className='col-md-4 '>
