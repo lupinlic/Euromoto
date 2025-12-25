@@ -45,7 +45,7 @@ const ProductColorForm = ({ id, onUpdate, onClose }) => {
                     console.log(data);
                     setProductColorName(data.ProductColorName);
                     setProductID(data.ProductID);
-                    setPreviewImage(`https://api.dolamoto.io.vn/image/${data.product.category.parent.CategoryParentName}/${data.product.category.CategoryName}/${data.product.ProductName}/${data.ProductColorImg}`);
+                    setPreviewImage(`http://127.0.0.1:8000/image/${data.product.category.parent.CategoryParentName}/${data.product.category.CategoryName}/${data.product.ProductName}/${data.ProductColorImg}`);
                     console.log(previewImage);
                 })
                 .catch((error) => {
