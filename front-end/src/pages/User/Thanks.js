@@ -33,7 +33,7 @@ function Thanks() {
                 try {
                     await orderApi.addOrder(payload)
 
-                    await sendEmailNotification(payload)
+                    // await sendEmailNotification(payload)
 
                     await Promise.all(
                         cartid?.map(item =>
