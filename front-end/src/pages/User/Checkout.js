@@ -27,6 +27,7 @@ function Checkout() {
     const [addresses, setAddresses] = useState([]);
     const [customer, setCustomer] = useState([]);
     const [product, setProduct] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     const handleAddSuccess = () => {
         fetchAddresses(); // Gọi API load lại địa chỉ
@@ -134,13 +135,13 @@ function Checkout() {
 
     const fetchAddresses = async () => {
         try {
-            let res;
-            res = await addressApi.getDefaultAddress(userId);
+            setLoading(true); // 🔄 bắt đầu quay
+            const res = await addressApi.getDefaultAddress(userId);
             setAddresses(res.data);
-
-
         } catch (err) {
-            console.error("Lỗi lấy sản phẩm:", err);
+            console.error("Lỗi lấy địa chỉ:", err);
+        } finally {
+            setLoading(false); // ✅ dừng quay
         }
     };
     const fetchCustomer = async () => {
@@ -288,42 +289,89 @@ function Checkout() {
                 name='Thanh toán' />
             <div className='container '>
                 <div className='row mt-5'>
-                    <div className='col-md-4 checkout'>
+                    <div className="col-md-4 checkout">
                         <h6>Thông tin nhận hàng</h6>
-                        {addresses && Object.keys(addresses).length > 0 ? (
+
+                        {/* 1️⃣ Loading */}
+                        {loading && (
+                            <div className="d-flex justify-content-center my-3">
+                                <div className="spinner-border text-primary" role="status">
+                                    <span className="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* 2️⃣ Có địa chỉ */}
+                        {!loading && addresses && Object.keys(addresses).length > 0 && (
                             <>
-                                <input type='text' placeholder='Họ tên' value={addresses?.FullName || ''} />
-                                <input type='text' placeholder='Số điện thoại ' value={addresses?.PhoneNumber || ''} />
-                                <input type='text' placeholder='Địa chỉ' value={addresses?.SpecificAddress || ''} />
-                                <select value={addresses.Provinces || ''}>
-                                    <option>{addresses.Provinces || ''}</option>
+                                <input
+                                    type="text"
+                                    placeholder="Họ tên"
+                                    value={addresses.FullName || ''}
+                                    readOnly
+                                />
+                                <input
+                                    type="text"
+                                    placeholder="Số điện thoại"
+                                    value={addresses.PhoneNumber || ''}
+                                    readOnly
+                                />
+                                <input
+                                    type="text"
+                                    placeholder="Địa chỉ"
+                                    value={addresses.SpecificAddress || ''}
+                                    readOnly
+                                />
+
+                                <select value={addresses.Provinces || ''} disabled>
+                                    <option>{addresses.Provinces}</option>
                                 </select>
-                                <select value={addresses.Districts || ''}>
-                                    <option>{addresses.Districts || ''}</option>
+
+                                <select value={addresses.Districts || ''} disabled>
+                                    <option>{addresses.Districts}</option>
                                 </select>
-                                <select value={addresses.Wards || ''}>
-                                    <option>{addresses.Wards || ''}</option>
+
+                                <select value={addresses.Wards || ''} disabled>
+                                    <option>{addresses.Wards}</option>
                                 </select>
-                                <textarea placeholder='Ghi chú'></textarea>
+
+                                <textarea placeholder="Ghi chú"></textarea>
                             </>
-                        ) : (
+                        )}
+
+                        {/* 3️⃣ Không có địa chỉ */}
+                        {!loading && (!addresses || Object.keys(addresses).length === 0) && (
                             <div>
                                 <p>Bạn chưa có địa chỉ nhận hàng!</p>
-                                <button style={{ width: '150px', height: '40px', borderRadius: '5px', border: 'none', background: '#d71920', color: '#fff' }} className='btadd mt-2' onClick={() => openForm()}>Thêm địa chỉ</button>
+
+                                <button
+                                    style={{
+                                        width: '150px',
+                                        height: '40px',
+                                        borderRadius: '5px',
+                                        border: 'none',
+                                        background: '#d71920',
+                                        color: '#fff',
+                                    }}
+                                    className="btadd mt-2"
+                                    onClick={openForm}
+                                >
+                                    Thêm địa chỉ
+                                </button>
+
                                 {isFormVisible && (
                                     <>
-                                        <div className="overlay"></div> {/* Lớp overlay */}
-                                        {isFormVisible && (
-                                            <AddressForm
-                                                onClose={closeForm}
-                                                onSuccess={handleAddSuccess}
-                                            />
-                                        )}
+                                        <div className="overlay"></div>
+                                        <AddressForm
+                                            onClose={closeForm}
+                                            onSuccess={handleAddSuccess}
+                                        />
                                     </>
                                 )}
                             </div>
                         )}
                     </div>
+
 
                     <div className='col-md-4 mb-1 mb-md-0'>
                         <h6>Vận chuyển</h6>

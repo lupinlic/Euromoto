@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
+use App\Models\ProductVersion;
 
 class OrderController extends Controller
 {
@@ -44,47 +45,89 @@ class OrderController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        //
+   public function store(Request $request)
+{
+    DB::beginTransaction();
+
+    try {
         $order = Order::create([
             'CustomerID' => $request->CustomerID,
             'AddressID' => $request->AddressID,
             'OrderDate' => $request->OrderDate,
             'status' => 'pending',
-            'TotalPrice' => $request->TotalPrice, // sẽ cập nhật sau
+            'TotalPrice' => 0, // sẽ cập nhật sau
         ]);
+
         $order->payment()->create([
             'Method' => $request->Method,
-            'Status' => $request->Method === 'cod' ? 'pending' : 'completed', 
+            'Status' => $request->Method === 'cod' ? 'pending' : 'completed',
         ]);
 
-        
         $totalPrice = 0;
 
-    foreach ($request->items as $item) {
-        $product = Product::find($item['ProductID']);
+        foreach ($request->items as $item) {
 
-        if (!$product) continue;
+            // ✅ Lấy product
+            $product = Product::find($item['ProductID']);
+            if (!$product) {
+                throw new \Exception('Sản phẩm không tồn tại');
+            }
 
-        $price = $product->ProductPrice ?? 0;
+            // ✅ Lấy version và khóa dòng
+            $productVersion = ProductVersion::lockForUpdate()
+                ->where('ProductVersionID', $item['ProductVersionID'])
+                ->where('ProductID', $item['ProductID'])
+                ->first();
 
-        $order->items()->create([
-            'ProductID' => $item['ProductID'],
-            'ProductVersionID' => $item['ProductVersionID'] ?? null,
-            'ProductColorID' => $item['ProductColorID'] ?? null,
-            'Quantity' => $item['Quantity'],
+            if (!$productVersion) {
+                throw new \Exception('Phiên bản sản phẩm không tồn tại');
+            }
+
+            // ✅ Kiểm tra tồn kho
+            if ($productVersion->ProductVersionQuantity < $item['Quantity']) {
+                throw new \Exception('Số lượng sản phẩm không đủ');
+            }
+
+            $price = $product->ProductPrice ?? 0;
+
+            // tạo order item
+            $order->items()->create([
+                'ProductID' => $item['ProductID'],
+                'ProductVersionID' => $item['ProductVersionID'],
+                'ProductColorID' => $item['ProductColorID'] ?? null,
+                'Quantity' => $item['Quantity'],
+            ]);
+
+            // ✅ Trừ kho theo version
+            $productVersion->decrement(
+                'ProductVersionQuantity',
+                $item['Quantity']
+            );
+
+            $totalPrice += $price * $item['Quantity'];
+        }
+
+        // ✅ Update tổng tiền
+        $order->update([
+            'TotalPrice' => $totalPrice
         ]);
 
-        $totalPrice += $price * $item['Quantity'];
-    }
+        DB::commit();
 
+        return response()->json([
+            'message' => 'Đặt hàng thành công',
+            'data' => $order->load('items')
+        ]);
 
-    return response()->json([
-        'message' => 'Đặt hàng thành công',
-        'data' => $order->load('items')
-    ]);
+    } catch (\Exception $e) {
+        DB::rollBack();
+
+        return response()->json([
+            'message' => 'Đặt hàng thất bại',
+            'error' => $e->getMessage()
+        ], 400);
     }
+}
     public function show($OrderID)
     {
         //

@@ -39,7 +39,8 @@ function Thanks() {
             const createOrder = async () => {
                 try {
                     await orderApi.addOrder(payload)
-                    await sendEmailNotification(payload)
+
+                    // await sendEmailNotification(payload)
 
                     await Promise.all(
                         cartid.map(id => cartApi.removetocart(id))
