@@ -57,8 +57,8 @@ function Checkout() {
     };
     const navigate = useNavigate();
     const payload = {
-        CustomerID: customer.CustomerID,
-        AddressID: addresses.AddressID,
+        CustomerID: customer?.CustomerID,
+        AddressID: addresses?.AddressID,
         Method: selectedPayment,
         TotalPrice: total,
         OrderDate: dayjs().format("YYYY-MM-DD HH:mm:ss"),
