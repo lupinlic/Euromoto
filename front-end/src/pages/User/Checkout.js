@@ -109,7 +109,7 @@ function Checkout() {
             );
             fetchCartCount(); // Cập nhật lại số lượng giỏ hàng
             // Điều hướng sang trang cảm ơn
-            sendEmailNotification();
+            // sendEmailNotification();
             navigate('/Thanks?payment=cod')
         } catch (err) {
             navigate('/order-failed')
