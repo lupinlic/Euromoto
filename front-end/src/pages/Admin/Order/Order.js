@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import orderApi from '../../../api/orderApi';
+import LoadingOverlay from '../../../components/LoadingOverlay';
 import OrderDetails from './OrderDetails';
 import ComfirmOrder from './ComfirmOrder';
 import Bill from './Bill';
@@ -8,6 +9,7 @@ function Order() {
     const [searchTerm, setSearchTerm] = useState('');
     const [filtered, setFiltered] = useState([]);
     const [order, setOrder] = useState([]);
+    const [loading, setLoading] = useState(false);
     const [isFormVisible, setIsFormVisible] = useState(false);
     const [isFormVisible1, setIsFormVisible1] = useState(false);
     const [isFormVisible2, setIsFormVisible2] = useState(false);
@@ -15,6 +17,7 @@ function Order() {
     const [selectedOrder, setSelectedOrder] = useState(null);
     const fetchOrder = async () => {
         try {
+            setLoading(true);
             const response = await orderApi.getAll();
             setOrder(response.data);
             console.log(response.data);
@@ -23,6 +26,8 @@ function Order() {
             }
         } catch (error) {
             console.error('Có lỗi khi lấy danh sách tài khoản:', error);
+        } finally {
+            setLoading(false);
         }
     };
     const handleSearch = () => {
@@ -119,6 +124,7 @@ function Order() {
                         <button className="btn btn-secondary" onClick={handleShowAll} style={{ width: '100px' }}>Tất cả</button>
                     </div>
                 </div>
+                {loading && <LoadingOverlay />}
                 <table className="table table-striped">
                     <thead>
                         <tr>

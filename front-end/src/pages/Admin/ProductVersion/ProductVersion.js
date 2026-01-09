@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ProductVersionForm from './ProductVersionForm';
 import productApi from '../../../api/productApi';
+import LoadingOverlay from '../../../components/LoadingOverlay';
 
 function ProductVersion() {
     const [isFormVisible, setIsFormVisible] = useState(false);
@@ -20,6 +21,7 @@ function ProductVersion() {
     };
     const get_all = async (page = 1) => {
         try {
+            setLoading(true);
             const response = await productApi.getVersion(page, 10);
             setProduct(response.data.data);
             setCurrentPage(response.data.current_page);
@@ -27,6 +29,8 @@ function ProductVersion() {
             console.log(response.data.data);
         } catch (error) {
             console.error('Có lỗi khi lấy danh sách :', error);
+        } finally {
+            setLoading(false);
         }
     };
     const deletecate = async (id) => {
@@ -68,7 +72,7 @@ function ProductVersion() {
                     </thead>
                     <tbody>
                         {loading ? (
-                            <p>Đang tải...</p>
+                            <tr><td colSpan={5}><LoadingOverlay /></td></tr>
                         ) : (
                             product?.map((item, index) => (
                                 <tr key={index}>

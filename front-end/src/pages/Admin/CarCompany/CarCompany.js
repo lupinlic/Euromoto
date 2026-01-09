@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import categoryParentApi from '../../../api/categoryParentApi';
 import CarCompanyForm from './CarCompanyForm';
+import LoadingOverlay from '../../../components/LoadingOverlay';
 
 function CarCompany() {
     const [searchTerm, setSearchTerm] = useState('');
     const [filtered, setFiltered] = useState([]);
     const [isFormVisible, setIsFormVisible] = useState(false);
     const [carCompany, setCarCompany] = useState(null);
+    const [loading, setLoading] = useState(false);
     const [selectedId, setSelectedId] = useState(null);
     const openForm = (id = null) => {
         setSelectedId(id);
@@ -19,6 +21,7 @@ function CarCompany() {
     };
     const get_all = async () => {
         try {
+            setLoading(true);
             const response = await categoryParentApi.getCategoryPrarent();
             setCarCompany(response.data);
             console.log(response.data);
@@ -27,6 +30,8 @@ function CarCompany() {
             }
         } catch (error) {
             console.error('Có lỗi khi lấy danh sách :', error);
+        } finally {
+            setLoading(false);
         }
     };
     const deletecate = async (id) => {
@@ -79,6 +84,7 @@ function CarCompany() {
             </div>
 
             <div className='container pt-4'>
+                {loading && <LoadingOverlay />}
                 <table className="table table-striped">
                     <thead>
                         <tr>

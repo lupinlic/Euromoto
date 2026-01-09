@@ -47,7 +47,11 @@ function Cart() {
         }
         setSelectAll(!selectAll); // Đảo ngược trạng thái của "Chọn tất cả"
     };
-    const handleIncrease = async (cartId, currentQty) => {
+    const handleIncrease = async (cartId, currentQty, maxQty) => {
+        if (typeof maxQty === 'number' && currentQty >= maxQty) {
+            toast.error('Số lượng vượt quá tồn kho.');
+            return;
+        }
         const newQty = currentQty + 1;
         try {
             await cartApi.updateQuantitytocart(cartId, newQty);
@@ -154,7 +158,7 @@ function Cart() {
                                         <div className='input-number-product m-0'>
                                             <button onClick={() => handleDecrease(cart.CartID, cart.Quantity)}>-</button>
                                             <input type='number' readOnly value={cart.Quantity} />
-                                            <button onClick={() => handleIncrease(cart.CartID, cart.Quantity)}>+</button>
+                                            <button onClick={() => handleIncrease(cart.CartID, cart.Quantity, cart.version?.ProductVersionQuantity)}>+</button>
                                         </div>
                                     </div>
                                     <div className="col-md-2 col-6">

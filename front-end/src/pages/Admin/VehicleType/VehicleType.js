@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import VehicleTypeForm from './VehicleTypeForm';
 import categoryApi from '../../../api/categoryApi';
+import LoadingOverlay from '../../../components/LoadingOverlay';
 
 function VehicleType() {
     const [searchTerm, setSearchTerm] = useState('');
     const [filtered, setFiltered] = useState([]);
     const [isFormVisible, setIsFormVisible] = useState(false);
     const [category, setCategory] = useState(null);
+    const [loading, setLoading] = useState(false);
     const [selectedId, setSelectedId] = useState(null);
     const openForm = (id = null) => {
         setSelectedId(id);
@@ -19,6 +21,7 @@ function VehicleType() {
     };
     const get_all = async () => {
         try {
+            setLoading(true);
             const response = await categoryApi.getCategory();
             setCategory(response.data);
             console.log(response.data);
@@ -27,6 +30,8 @@ function VehicleType() {
             }
         } catch (error) {
             console.error('Có lỗi khi lấy danh sách :', error);
+        } finally {
+            setLoading(false);
         }
     };
     const deletecate = async (id) => {
@@ -79,6 +84,7 @@ function VehicleType() {
             </div>
 
             <div className='container pt-4'>
+                {loading && <LoadingOverlay />}
                 <table className="table table-striped">
                     <thead>
                         <tr>

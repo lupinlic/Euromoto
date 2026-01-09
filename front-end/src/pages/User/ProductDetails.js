@@ -111,7 +111,17 @@ function ProductDetails() {
       setLoading(false); // Tắt loading
     }
   };
-  const isAvailable = totalQuantity > 0;
+  const availableQuantity = selectedVersion
+    ? selectedVersion.ProductVersionQuantity
+    : totalQuantity;
+  const isAvailable = availableQuantity > 0;
+
+  useEffect(() => {
+    if (selectedVersion) {
+      const avail = selectedVersion.ProductVersionQuantity ?? 0;
+      if (quantity > avail) setQuantity(avail > 0 ? avail : 1);
+    }
+  }, [selectedVersion]);
   useEffect(() => {
     if (productID) {
       fetchProducts();
@@ -210,11 +220,7 @@ function ProductDetails() {
               <span style={{ color: "#014686", marginRight: "8px" }}>
                 Tình trạng:
               </span>
-              {totalQuantity > 0 ? (
-                <span>Còn hàng</span>
-              ) : (
-                <span>Hết hàng</span>
-              )}
+              {isAvailable ? <span>Còn hàng</span> : <span>Hết hàng</span>}
             </p>
           </div>
           <div className="col-md-3">
@@ -316,6 +322,9 @@ function ProductDetails() {
                 </div>
               ))}
             </div>
+            <div style={{ fontWeight: "600", marginTop: "12px" }}>
+                <p className="m-0">Tồn kho: {availableQuantity}</p>
+              </div>
             <div className="d-flex align-items-center mt-2">
               <p className="m-0" style={{ fontWeight: "600" }}>
                 Số lượng:
@@ -325,6 +334,7 @@ function ProductDetails() {
                 <input type="number" value={quantity} />
                 <button onClick={increaseQuantity}>+</button>
               </div>
+              
               <button
                 onClick={handleAddToCart}
                 className="addtocart"

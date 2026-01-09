@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import ProductForm from './ProductForm';
 import productApi from '../../../api/productApi';
+import LoadingOverlay from '../../../components/LoadingOverlay';
 
 function Product() {
     const [searchTerm, setSearchTerm] = useState('');
     const [filtered, setFiltered] = useState([]);
     const [isFormVisible, setIsFormVisible] = useState(false);
     const [product, setProduct] = useState(null);
+    const [loading, setLoading] = useState(false);
     const [selectedId, setSelectedId] = useState(null);
     const openForm = (id = null) => {
         setSelectedId(id);
@@ -19,6 +21,7 @@ function Product() {
     };
     const get_all = async () => {
         try {
+            setLoading(true);
             const response = await productApi.getAll();
             setProduct(response);
             console.log(response);
@@ -27,6 +30,8 @@ function Product() {
             }
         } catch (error) {
             console.error('Có lỗi khi lấy danh sách :', error);
+        } finally {
+            setLoading(false);
         }
     };
     const deletecate = async (id) => {
@@ -79,6 +84,7 @@ function Product() {
             </div>
 
             <div className='container pt-4'>
+                {loading && <LoadingOverlay />}
                 <table className="table table-striped">
                     <thead>
                         <tr>

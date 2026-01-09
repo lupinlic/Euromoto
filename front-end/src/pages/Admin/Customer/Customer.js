@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import customerApi from '../../../api/customerApi';
+import LoadingOverlay from '../../../components/LoadingOverlay';
 
 function Customer() {
     const [searchTerm, setSearchTerm] = useState('');
     const [filtered, setFiltered] = useState([]);
     const [customer, setCustomer] = useState([]);
+    const [loading, setLoading] = useState(false);
     const fetchCustomer = async () => {
         try {
+            setLoading(true);
             const response = await customerApi.getAll();
             setCustomer(response.data);
             console.log(response.data);
@@ -15,6 +18,8 @@ function Customer() {
             }
         } catch (error) {
             console.error('Có lỗi khi lấy danh sách tài khoản:', error);
+        } finally {
+            setLoading(false);
         }
     };
     const handleSearch = () => {
@@ -53,6 +58,7 @@ function Customer() {
                     </div>
                 </div>
 
+                {loading && <LoadingOverlay />}
                 <table className="table table-striped">
                     <thead>
                         <tr>

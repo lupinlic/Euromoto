@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import newApi from '../../../api/newApi'
+import LoadingOverlay from '../../../components/LoadingOverlay';
 
 function News() {
     const [searchTerm, setSearchTerm] = useState('');
     const [filtered, setFiltered] = useState([]);
     const [news, setNews] = useState([]);
+    const [loading, setLoading] = useState(false);
     const fetchNews = async () => {
         try {
+            setLoading(true);
             const response = await newApi.getNews();
             setNews(response.data);
             console.log(response.data);
@@ -15,6 +18,8 @@ function News() {
             }
         } catch (error) {
             console.error('Có lỗi khi lấy danh sách tài khoản:', error);
+        } finally {
+            setLoading(false);
         }
     };
     const handleSearch = () => {
@@ -50,6 +55,7 @@ function News() {
                         <button className="btn btn-secondary" onClick={handleShowAll} style={{ width: '100px' }}>Tất cả</button>
                     </div>
                 </div>
+                {loading && <LoadingOverlay />}
                 <table className="table table-striped">
                     <thead>
                         <tr>

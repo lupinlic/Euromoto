@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import AccountForm from './AccountForm';
 import authUser from '../../../api/authUser';
+import LoadingOverlay from '../../../components/LoadingOverlay';
 
 function Account() {
     const [searchTerm, setSearchTerm] = useState('');
@@ -8,6 +9,7 @@ function Account() {
     const [isFormVisible, setIsFormVisible] = useState(false);
     const [user, setUser] = useState(null);
     const [selectedUserId, setSelectedUserId] = useState(null);
+    const [loading, setLoading] = useState(false);
     const openForm = (userId = null) => {
         setSelectedUserId(userId);
         setIsFormVisible(true);
@@ -21,15 +23,17 @@ function Account() {
     // Lấy danh sách tài khoản
     const getAllUser = async () => {
         try {
+            setLoading(true);
             const response = await authUser.get_all();
             setUser(response.data);
-
 
             if (!searchTerm.trim()) {
                 setFiltered(response.data);
             }
         } catch (error) {
             console.error('Có lỗi khi lấy danh sách tài khoản:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -87,6 +91,7 @@ function Account() {
                 </div>
 
                 <div className='container pt-4'>
+                    {loading && <LoadingOverlay />}
                     <table className="table table-striped">
                         <thead>
                             <tr>

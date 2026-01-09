@@ -5,14 +5,17 @@ import Crumb from '../../components/Crumb'
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from 'react-router-dom';
 import authUser from '../../api/authUser';
+import LoadingOverlay from '../../components/LoadingOverlay';
 
 function Login() {
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
     const [error, setError] = useState("");
     function HandleLogin(e) {
         e.preventDefault();
+        setLoading(true);
         const data = {
             email,
             password,
@@ -23,10 +26,12 @@ function Login() {
                 localStorage.setItem('user_id', response.user.id);
                 localStorage.setItem('role', response.user.role);
                 HandleCheckRole(response.user.role)
+                setLoading(false);
                 window.location.reload();
                 // console.log(response.data.role)
             })
             .catch(error => {
+                setLoading(false);
                 setError("Mật khẩu hoặc email không đúng!");
                 console.error('Có lỗi khi đăng nhập ' + error + '-' + error.response.data.message)
             })
@@ -55,6 +60,7 @@ function Login() {
                 <form
                 // onSubmit={handleLogin}
                 >
+                    {loading && <LoadingOverlay />}
                     <div className="mb-3">
                         <label htmlFor="email" className="form-label">Email</label>
                         <input type="email"
@@ -80,7 +86,8 @@ function Login() {
                     <button type="submit" className="btn btn-pink mt-3" style={{ backgroundColor: '#014686', color: '#fff' }}
                         // onClick={handleLogin}
                         onClick={(e) => { HandleLogin(e) }}
-                    >Đăng nhập</button>
+                        disabled={loading}
+                    >{loading ? 'Đang đăng nhập...' : 'Đăng nhập'}</button>
                 </form>
                 <div className="divider">hoặc</div>
                 <div className="social-login">

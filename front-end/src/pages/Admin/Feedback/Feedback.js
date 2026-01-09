@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import feedbackApi from '../../../api/feedbackApi'
 import FeedbackForm from './FeedbackForm';
+import LoadingOverlay from '../../../components/LoadingOverlay';
 
 function Feedback() {
     const [isFormVisible, setIsFormVisible] = useState(false);
@@ -15,13 +16,17 @@ function Feedback() {
         setIsFormVisible(false);
     };
     const [feedback, setFeedback] = useState([]);
+    const [loading, setLoading] = useState(false);
     const fetchFeedback = async () => {
         try {
+            setLoading(true);
             const response = await feedbackApi.getfeedback();
             setFeedback(response.data);
             console.log(response.data);
         } catch (error) {
             console.error('Có lỗi khi lấy danh sách tài khoản:', error);
+        } finally {
+            setLoading(false);
         }
     };
     useEffect(() => {
@@ -31,6 +36,7 @@ function Feedback() {
         <div style={{ backgroundColor: '#fff', minHeight: '100vh', paddingLeft: '4px' }}>
             <div className='container pt-4'>
                 <h5>Danh sách phản hồi</h5>
+                {loading && <LoadingOverlay />}
                 <table className="table table-striped">
                     <thead>
                         <tr>

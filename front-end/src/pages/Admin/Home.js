@@ -1,6 +1,7 @@
 import { Line, Pie } from "react-chartjs-2";
 import orderApi from "../../api/orderApi";
 import React, { useState, useEffect } from "react";
+import LoadingOverlay from "../../components/LoadingOverlay";
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, ArcElement, Tooltip, Legend } from "chart.js";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, ArcElement, Tooltip, Legend);
@@ -14,6 +15,7 @@ function Home() {
     const [totalOrders, setTotalOrders] = useState(0);
     const [completedOrders, setCompletedOrders] = useState(0);
     const [revenue, setRevenue] = useState(0);
+    const [loading, setLoading] = useState(false);
 
     const [labels, setLabels] = useState([]);
     const [values, setValues] = useState([]);
@@ -21,19 +23,23 @@ function Home() {
 
     const [topProducts, setTopProducts] = useState([]);
 
-    const getStatistics = () => {
-        orderApi.getAdvancedStatistics({ from_date: fromDate, to_date: toDate, type })
-            .then((res) => {
-                const data = res;
-                console.log(data);
-                setTotalOrders(data.total_orders);
-                setCompletedOrders(data.completed_orders);
-                setRevenue(data.revenue);
-                setLabels(data.chart.labels);
-                setValues(data.chart.data);
-                setTopProducts(data.top_products);
-            })
-            .catch(console.error);
+    const getStatistics = async () => {
+        try {
+            setLoading(true);
+            const res = await orderApi.getAdvancedStatistics({ from_date: fromDate, to_date: toDate, type });
+            const data = res;
+            console.log(data);
+            setTotalOrders(data.total_orders);
+            setCompletedOrders(data.completed_orders);
+            setRevenue(data.revenue);
+            setLabels(data.chart.labels);
+            setValues(data.chart.data);
+            setTopProducts(data.top_products);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
     };
 
     useEffect(() => {
@@ -45,6 +51,7 @@ function Home() {
     };
     const handleAll = async () => {
         try {
+            setLoading(true);
             const res = await orderApi.getAdvancedStatistics(); // không truyền ngày
             setStatistics(res);
             console.log(res);
@@ -54,6 +61,9 @@ function Home() {
         } catch (error) {
             console.error("Lỗi khi thống kê tất cả:", error);
         }
+        finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -61,6 +71,8 @@ function Home() {
             <div className="border-bottom">
                 <i style={{ color: "#62677399" }}>Welcome!</i>
             </div>
+
+            {loading && <LoadingOverlay />}
 
             <div className="row mt-2 p-2">
                 <div className="col-md-4 p-2" style={{ height: "100px" }}>
